@@ -148,6 +148,64 @@ Status atual:
 - **Documentacao:** manter `docs/` como fonte conceitual e atualizar OpenAPI manual ao mudar REST.
 - **Qualidade:** ampliar testes unitarios de dominio e testes de integracao de autenticacao, JPA, JWT e endpoints.
 - **Product/Design/Go-to-Market assistido por IA:** usar o fluxo definido em `docs/ferramentas-ai-product-design-go-to-market.md`, mantendo plugins fora do runtime e submetendo outputs a revisao humana, seguranca, LGPD e governanca do repositorio.
+- **AppSec e criterios de aceite:** aplicar `docs/appsec-criterios-de-aceite.md` em contratos, comunicacoes e regras de negocio, com DoR/DoD e gates de seguranca proporcionais ao risco.
+
+## Trilha transversal — AppSec e criterios de aceite
+
+Referencia operacional: `docs/appsec-criterios-de-aceite.md`.
+
+### A0 — Imediato: baseline de seguranca
+
+- Adotar Codex Security como ferramenta assistiva prioritaria para scans, analise e investigacao de seguranca.
+- Manter CI/GitHub como autoridade de merge e rastreabilidade.
+- Evoluir scanners de dependencias, secrets e SAST/CodeQL quando disponiveis na plataforma.
+- Classificar findings por impacto, explorabilidade, superficie e risco multi-tenant.
+- Findings criticos como cross-tenant leak, auth bypass, segredo valido exposto ou execucao remota exploravel bloqueiam merge/release.
+
+### A1 — Definition of Ready para novas features
+
+Antes de implementar feature relevante, registrar conforme aplicavel:
+
+- problema, ator e valor;
+- criterios de aceite funcionais;
+- contrato tecnico ou declaracao de que nao existe mudanca de contrato;
+- regras de negocio e invariantes;
+- impacto de seguranca, autorizacao e multi-tenant;
+- impacto LGPD/compliance;
+- estados UX relevantes;
+- dependencias externas e riscos.
+
+### A2 — Contratos explicitos
+
+- REST/BFF deve declarar request, response, codigos de erro, autenticacao, autorizacao, tenant e compatibilidade.
+- OpenAPI deve acompanhar mudancas REST.
+- Eventos/mensageria devem possuir nome/versao, produtor/consumidor, retry, idempotencia e minimizacao de dados quando aplicavel.
+- Mudancas breaking exigem estrategia explicita de migracao/versionamento.
+
+### A3 — Comunicacoes confiaveis
+
+- Email, in-app, push e mensagens operacionais devem declarar gatilho, destinatario, canal, conteudo minimo, locale, CTA, retry e comportamento em indisponibilidade.
+- Links devem respeitar autorizacao no destino.
+- Falha de canal secundario nao deve corromper operacao principal salvo regra de negocio explicita.
+- Claims legais/comerciais exigem evidencia e revisao adequada.
+
+### A4 — Regras de negocio testaveis
+
+Cada regra relevante deve explicitar pre-condicoes, atores autorizados, tenant, happy path, bordas, invariantes, erros de dominio, efeitos colaterais, idempotencia/concorrencia, observabilidade e testes.
+
+### A5 — Definition of Done
+
+Uma issue so e concluida quando, conforme aplicavel:
+
+- criterios de aceite passam;
+- testes unitarios e integracao/contrato passam;
+- autorizacao negativa e tentativa cross-tenant foram cobertas para recurso tenant-bound;
+- lint/typecheck/build passam;
+- OpenAPI/docs foram atualizados;
+- findings de seguranca relevantes foram tratados;
+- auditoria/telemetria necessarias existem;
+- nenhum segredo ou dado sensivel indevido aparece no diff;
+- rollback ou estrategia de reversao e conhecida para mudancas de risco.
 
 ## Trilha transversal — Product, Design e Go-to-Market assistidos por plugins
 
