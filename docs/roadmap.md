@@ -1,6 +1,6 @@
 # Roadmap — Gestao Inteligente de Escalas
 
-Data de referencia: 2026-06-30.
+Data de referencia: 2026-09-07.
 
 ## Estrategia de entrega
 
@@ -147,6 +147,78 @@ Status atual:
 - **DevOps:** health checks, Compose por ambiente, secrets obrigatorios fora de dev, backups e CI/CD.
 - **Documentacao:** manter `docs/` como fonte conceitual e atualizar OpenAPI manual ao mudar REST.
 - **Qualidade:** ampliar testes unitarios de dominio e testes de integracao de autenticacao, JPA, JWT e endpoints.
+- **Product/Design/Go-to-Market assistido por IA:** usar o fluxo definido em `docs/ferramentas-ai-product-design-go-to-market.md`, mantendo plugins fora do runtime e submetendo outputs a revisao humana, seguranca, LGPD e governanca do repositorio.
+
+## Trilha transversal — Product, Design e Go-to-Market assistidos por plugins
+
+Esta trilha nao substitui as fases de produto. Ela acompanha todas as fases e define em que momento as ferramentas adotadas agregam valor.
+
+| Etapa | Ferramentas prioritarias | Resultado esperado |
+|---|---|---|
+| Estrategia | Business Strategy Builder, Deep Research | escolhas, trade-offs, nichos, SWOT/Oceano Azul e hipoteses de mercado |
+| Posicionamento | B2B Messaging Workshop | ICP, alternativas, diferenciacao, proposta de valor, claims e evidencias |
+| Discovery | Product Design, Mobbin, BuildBetter.ai quando houver base de evidencias | jornadas, problemas, referencias, hipoteses e criterios de aceitacao |
+| UI/Design System | Figma, Product Design, Themely, Font Pairing | tokens, componentes, variantes, responsividade e acessibilidade |
+| Implementacao | Codex/GitHub, Figma e Build Web Data Visualization quando aplicavel | codigo alinhado ao design e aos contratos, com testes e gates |
+| Marketing | B2B Messaging Workshop, Creative Production, Strapi/Next.js | homepage, landing pages, campanhas e assets coerentes com claims validados |
+| Comercial | Sales | playbook, discovery comercial, demos, business cases, pipeline e follow-up |
+| Analytics | Data Analytics, Build Web Data Visualization | metricas definidas, dashboards, funil trial -> paid e aprendizado de produto |
+| Evidencias | BuildBetter.ai | consolidacao de feedback/calls/documentos para priorizacao baseada em evidencias |
+
+### Roadmap operacional da trilha
+
+#### T0 — Imediato: governanca
+
+- Adotar `docs/ferramentas-ai-product-design-go-to-market.md` como referencia operacional.
+- Nao adicionar SDKs dos plugins ao runtime sem caso de uso de produto, ADR e avaliacao de seguranca/LGPD.
+- Usar dados ficticios ou anonimizados em design, marketing e demonstracoes sempre que possivel.
+- Manter requisitos, regras de negocio e decisoes finais no repositorio.
+
+#### T1 — Estrategia e positioning
+
+- Revisar Strategy Canvas/Oceano Azul e SWOT com Business Strategy Builder + Deep Research.
+- Executar B2B Messaging Workshop para consolidar ICP, alternativas, diferenciacao e proposta de valor.
+- Criar matriz de claims: comprovado, hipotese ou proibido ate evidencia.
+- Refletir decisoes aprovadas em `docs/Analise-Produto-Arquitetura-Concorrencia-Oceano-Azul.md`, `docs/okr.md` e conteudo editorial quando necessario.
+
+#### T2 — UX/UI antes de features de alto custo
+
+- Usar Mobbin para benchmarking de padroes, sem copiar identidade ou assets proprietarios.
+- Usar Product Design para auditar fluxos e prototipar jornadas criticas.
+- Consolidar telas aprovadas no Figma e evoluir Design System/tokens antes de espalhar estilos ad hoc no Next.js.
+- Tratar acessibilidade, loading, empty, error, disabled e responsividade como criterios de aceite.
+
+#### T3 — Implementacao assistida
+
+Para mudancas relevantes, o Codex deve seguir a ordem obrigatoria:
+
+1. problema;
+2. impacto arquitetural;
+3. alternativas;
+4. recomendacao;
+5. riscos;
+6. testes;
+7. seguranca;
+8. impacto multi-tenant;
+9. implementacao.
+
+Figma/Product Design servem de entrada visual; regras de negocio e autorizacao continuam no Spring Boot. Build Web Data Visualization deve apoiar dashboards e visualizacoes quantitativas quando houver metrica definida.
+
+#### T4 — Go-to-market
+
+- Usar B2B Messaging Workshop como fonte para narrativa de homepage, landing pages e sales deck.
+- Usar Creative Production para campanhas e assets dentro da identidade aprovada.
+- Usar Sales para estruturar discovery, demo, business case, proposta e follow-up.
+- Manter Strapi como fonte editorial; Spring Boot permanece dono de leads operacionais, trial, billing e limites.
+
+#### T5 — Analytics e aprendizado continuo
+
+- Instrumentar eventos de produto somente apos definir finalidade, minimizacao, tenant e retencao.
+- Usar Data Analytics para acquisition, activation, engagement, retention, revenue e conversion.
+- Usar Build Web Data Visualization para dashboards do produto e da operacao.
+- Introduzir BuildBetter.ai quando houver volume suficiente de feedback, calls e documentos para apoiar priorizacao baseada em evidencias.
+
+Ferramentas explicitamente fora do conjunto adotado neste momento: **UX Pilot, Zoho CRM e Mailchimp**. A adocao futura depende de necessidade comprovada, custo, privacidade, integracao e sobreposicao com a stack atual.
 
 ## Nichos prioritarios
 
