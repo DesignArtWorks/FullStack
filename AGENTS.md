@@ -15,6 +15,7 @@
 - O posicionamento de produto vigente esta documentado em `docs/Analise-Produto-Arquitetura-Concorrencia-Oceano-Azul.md`.
 - OKRs e roadmap atuais estao em `docs/okr.md` e `docs/roadmap.md`.
 - O plano de implementacao da gestao mensal inteligente de escalas esta em `docs/plano-implementacao-gestao-mensal-inteligente-escalas.md`.
+- O uso oficial de ferramentas/plugins para estrategia, Product Design, UX/UI, go-to-market e analytics esta documentado em `docs/ferramentas-ai-product-design-go-to-market.md`.
 
 ## Arquitetura alvo
 
@@ -329,3 +330,50 @@ Para repositórios com proteção de branch, `merge para develop e main` signifi
 3. verificar build;
 4. apresentar git diff;
 5. informar riscos ou pendências.
+
+## Uso de plugins e ferramentas assistivas pelo Codex
+
+Referencia detalhada: `docs/ferramentas-ai-product-design-go-to-market.md`.
+
+### Principio
+
+Plugins sao ferramentas de trabalho para discovery, design, implementacao assistida, marketing, vendas e analytics. Eles **nao sao dependencias do runtime** do Escala. Nao adicionar SDK, API ou integracao de um plugin ao Spring Boot, Next.js ou Strapi apenas porque a ferramenta esta disponivel.
+
+### Ferramentas adotadas e quando usar
+
+- **Business Strategy Builder:** estrategia, escolhas, trade-offs e Business Strategy Canvas.
+- **B2B Messaging Workshop:** ICP, alternativas, diferenciacao, proposta de valor, positioning e matriz de claims/evidencias.
+- **Deep Research:** pesquisa externa de mercado, concorrencia, regulacao e tendencias, sempre com fontes.
+- **Product Design:** discovery, auditoria de UX, user flows e prototipos antes de features de alto custo.
+- **Mobbin:** benchmarking de padroes UX/UI; usar como referencia, nunca para clonar identidade ou assets proprietarios.
+- **Figma:** fonte de verdade visual para telas aprovadas, Design System, tokens, componentes e handoff para implementacao.
+- **Themely Design+Style Generator:** exploracao visual inicial; nao substitui o Figma como fonte de verdade.
+- **Font Pairing: Design & Brands:** exploracao tipografica, sujeita a validacao de licenca, acessibilidade e performance.
+- **Build Web Data Visualization:** dashboards, graficos, Gantt, UML e visualizacoes implementadas no frontend quando houver metrica/requisito definido.
+- **Creative Production:** moodboards, conceitos de campanha e assets, respeitando identidade e claims aprovados.
+- **Sales:** discovery comercial, demo, business case, pipeline e follow-up; dados reais devem seguir minimizacao e LGPD.
+- **Data Analytics:** metricas de produto/negocio, funil, retention e trial -> paid; evitar analise cross-tenant identificavel sem desenho de privacidade.
+- **BuildBetter.ai:** consolidacao de feedback/calls/documentos quando houver volume suficiente de evidencias; nao substitui backlog/docs oficiais.
+
+Ferramentas explicitamente nao adotadas neste momento: **UX Pilot, Zoho CRM e Mailchimp**.
+
+### Fluxo preferencial para features com impacto de UX/produto
+
+1. validar problema e evidencia;
+2. revisar estrategia/posicionamento quando aplicavel;
+3. pesquisar referencias com Mobbin sem copiar terceiros;
+4. explorar fluxo/prototipo com Product Design;
+5. consolidar UI/Design System no Figma quando a mudanca for visual relevante;
+6. revisar acessibilidade, responsividade, loading, empty, error e permissoes;
+7. somente entao implementar no repositorio seguindo os gates tecnicos existentes;
+8. instrumentar metricas quando houver finalidade e definicao de evento;
+9. usar Data Analytics/BuildBetter para fechar o ciclo de aprendizado.
+
+### Regras de seguranca e governanca para plugins
+
+- Nao enviar secrets, tokens, chaves AWS, dumps de banco ou credenciais a ferramentas de design/marketing.
+- Preferir dados ficticios, sinteticos ou anonimizados em prototipos e materiais externos.
+- Nenhum output de IA pode decidir autorizacao, tenant, efetivar operacao privilegiada ou substituir validacao backend.
+- Claims sobre LGPD, Portaria 671, conformidade trabalhista, reducao de custo ou ganho percentual exigem evidencia adequada antes de publicacao.
+- Outputs de plugins devem ser revisados antes de entrar em codigo, documentacao oficial, marketing, contrato ou regra de negocio.
+- Novo plugin exige justificativa de problema, sobreposicao, custo, permissoes/dados, LGPD, lock-in e metrica de sucesso.
