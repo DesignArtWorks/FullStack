@@ -35,6 +35,7 @@ public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final TenantIsolationFilter tenantIsolationFilter;
     private final AuthenticationProvider authenticationProvider;
+    private final SecurityErrorHandler securityErrorHandler;
 
     @Value("${app.cors.allowed-origins:http://localhost:3000}")
     private String allowedOrigins;
@@ -86,7 +87,7 @@ public class SecurityConfiguration {
                             .requestMatchers("/api/v1/public/**").permitAll()
                             .requestMatchers("/api/v1/public/content/**").permitAll()
                             .requestMatchers("/api/v1/billing/webhook").permitAll()
-                            .requestMatchers("/actuator/health").permitAll()
+                            .requestMatchers("/actuator/health", "/actuator/health/liveness", "/actuator/health/readiness").permitAll()
                             .requestMatchers("/error").permitAll()
                             .requestMatchers("/actuator/metrics", "/actuator/prometheus").hasAuthority("ADMIN");
 
@@ -96,6 +97,10 @@ public class SecurityConfiguration {
 
                     auth.anyRequest().authenticated();
                 })
+                .exceptionHandling(errors -> errors
+                        .authenticationEntryPoint(securityErrorHandler)
+                        .accessDeniedHandler(securityErrorHandler)
+                )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
@@ -116,8 +121,8 @@ public class SecurityConfiguration {
                         .toList()
         );
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "If-Match", "X-Requested-With"));
-        configuration.setExposedHeaders(List.of("ETag"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "If-Match", "X-Requested-With", "X-Correlation-ID"));
+        configuration.setExposedHeaders(List.of("ETag", "X-Correlation-ID"));
         // Spring receives only Authorization: Bearer from the BFF, never a
         // browser session cookie. CORS credentials would add CSRF surface.
         configuration.setAllowCredentials(false);
