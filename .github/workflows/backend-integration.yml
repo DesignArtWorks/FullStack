@@ -165,6 +165,36 @@ jobs:
           -v "$PWD:/workspace" -w /workspace node:22-bookworm-slim
           sh -c "npm ci && npm run build"
 
+  frontend-security-e2e:
+    name: Frontend / Security E2E
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: Frontend/web-app3/escala/pnpm-lock.yaml
+
+      - name: Install dependencies and Chromium
+        working-directory: Frontend/web-app3/escala
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm exec playwright install --with-deps chromium
+
+      - name: Run Auth/BFF/Tenant security suite
+        working-directory: Frontend/web-app3/escala
+        run: pnpm run test:e2e:ci
+
   required-gate:
     name: CI / Required Gate
     if: always()
@@ -174,6 +204,7 @@ jobs:
       - backend-integration
       - frontend
       - cms
+      - frontend-security-e2e
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
@@ -186,6 +217,7 @@ jobs:
             "${{ needs.backend-integration.result }}"
             "${{ needs.frontend.result }}"
             "${{ needs.cms.result }}"
+            "${{ needs.frontend-security-e2e.result }}"
           )
           printf 'Required job result: %s\n' "${results[@]}"
           for result in "${results[@]}"; do
