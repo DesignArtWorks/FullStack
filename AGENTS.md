@@ -15,6 +15,8 @@
 - O posicionamento de produto vigente esta documentado em `docs/Analise-Produto-Arquitetura-Concorrencia-Oceano-Azul.md`.
 - OKRs e roadmap atuais estao em `docs/okr.md` e `docs/roadmap.md`.
 - O plano de implementacao da gestao mensal inteligente de escalas esta em `docs/plano-implementacao-gestao-mensal-inteligente-escalas.md`.
+- O uso oficial de ferramentas/plugins para estrategia, Product Design, UX/UI, go-to-market e analytics esta documentado em `docs/ferramentas-ai-product-design-go-to-market.md`.
+- A politica oficial de AppSec, Definition of Ready/Done e criterios de aceite para contratos, comunicacoes e regras de negocio esta em `docs/appsec-criterios-de-aceite.md`.
 
 ## Arquitetura alvo
 
@@ -329,3 +331,106 @@ Para repositórios com proteção de branch, `merge para develop e main` signifi
 3. verificar build;
 4. apresentar git diff;
 5. informar riscos ou pendências.
+
+## Uso de plugins e ferramentas assistivas pelo Codex
+
+Referencia detalhada: `docs/ferramentas-ai-product-design-go-to-market.md`.
+
+### Principio
+
+Plugins sao ferramentas de trabalho para discovery, design, implementacao assistida, marketing, vendas e analytics. Eles **nao sao dependencias do runtime** do Escala. Nao adicionar SDK, API ou integracao de um plugin ao Spring Boot, Next.js ou Strapi apenas porque a ferramenta esta disponivel.
+
+### Ferramentas adotadas e quando usar
+
+- **Business Strategy Builder:** estrategia, escolhas, trade-offs e Business Strategy Canvas.
+- **B2B Messaging Workshop:** ICP, alternativas, diferenciacao, proposta de valor, positioning e matriz de claims/evidencias.
+- **Deep Research:** pesquisa externa de mercado, concorrencia, regulacao e tendencias, sempre com fontes.
+- **Product Design:** discovery, auditoria de UX, user flows e prototipos antes de features de alto custo.
+- **Mobbin:** benchmarking de padroes UX/UI; usar como referencia, nunca para clonar identidade ou assets proprietarios.
+- **Figma:** fonte de verdade visual para telas aprovadas, Design System, tokens, componentes e handoff para implementacao.
+- **Themely Design+Style Generator:** exploracao visual inicial; nao substitui o Figma como fonte de verdade.
+- **Font Pairing: Design & Brands:** exploracao tipografica, sujeita a validacao de licenca, acessibilidade e performance.
+- **Build Web Data Visualization:** dashboards, graficos, Gantt, UML e visualizacoes implementadas no frontend quando houver metrica/requisito definido.
+- **Creative Production:** moodboards, conceitos de campanha e assets, respeitando identidade e claims aprovados.
+- **Sales:** discovery comercial, demo, business case, pipeline e follow-up; dados reais devem seguir minimizacao e LGPD.
+- **Data Analytics:** metricas de produto/negocio, funil, retention e trial -> paid; evitar analise cross-tenant identificavel sem desenho de privacidade.
+- **BuildBetter.ai:** consolidacao de feedback/calls/documentos quando houver volume suficiente de evidencias; nao substitui backlog/docs oficiais.
+
+Ferramentas explicitamente nao adotadas neste momento: **UX Pilot, Zoho CRM e Mailchimp**.
+
+### Fluxo preferencial para features com impacto de UX/produto
+
+1. validar problema e evidencia;
+2. revisar estrategia/posicionamento quando aplicavel;
+3. pesquisar referencias com Mobbin sem copiar terceiros;
+4. explorar fluxo/prototipo com Product Design;
+5. consolidar UI/Design System no Figma quando a mudanca for visual relevante;
+6. revisar acessibilidade, responsividade, loading, empty, error e permissoes;
+7. somente entao implementar no repositorio seguindo os gates tecnicos existentes;
+8. instrumentar metricas quando houver finalidade e definicao de evento;
+9. usar Data Analytics/BuildBetter para fechar o ciclo de aprendizado.
+
+### Regras de seguranca e governanca para plugins
+
+- Nao enviar secrets, tokens, chaves AWS, dumps de banco ou credenciais a ferramentas de design/marketing.
+- Preferir dados ficticios, sinteticos ou anonimizados em prototipos e materiais externos.
+- Nenhum output de IA pode decidir autorizacao, tenant, efetivar operacao privilegiada ou substituir validacao backend.
+- Claims sobre LGPD, Portaria 671, conformidade trabalhista, reducao de custo ou ganho percentual exigem evidencia adequada antes de publicacao.
+- Outputs de plugins devem ser revisados antes de entrar em codigo, documentacao oficial, marketing, contrato ou regra de negocio.
+- Novo plugin exige justificativa de problema, sobreposicao, custo, permissoes/dados, LGPD, lock-in e metrica de sucesso.
+
+## AppSec e criterios de aceite obrigatorios
+
+Referencia detalhada: `docs/appsec-criterios-de-aceite.md`.
+
+### Ferramentas de seguranca
+
+- **Codex Security** e a ferramenta assistiva prioritaria para scans, analise e investigacao de seguranca do codigo/configuracao quando disponivel.
+- GitHub/CI continua sendo a autoridade para checks e merge.
+- Codex Security nao substitui SAST/CodeQL, dependency scanning, secret scanning, testes de autorizacao, threat modeling ou revisao humana.
+- ArmorCodex, se adotado futuramente, serve para governanca de agentes e approvals; nao substitui scanner AppSec.
+- Scanners externos de privacidade/DNS podem complementar producao publica, mas nao alteram regras de seguranca do backend.
+
+### Definition of Ready obrigatoria
+
+Antes de implementar feature relevante, definir conforme aplicavel:
+
+1. problema, ator e valor;
+2. criterios de aceite funcionais;
+3. contrato tecnico ou ausencia de mudanca contratual;
+4. regras de negocio e invariantes;
+5. autorizacao e impacto multi-tenant;
+6. impacto LGPD/compliance;
+7. estados UX relevantes;
+8. dependencias externas e riscos.
+
+### Criterios de aceite de contratos
+
+Mudancas REST/BFF/eventos devem declarar produtor/consumidor, schema, autenticacao, autorizacao, tenant, sucesso/erros, compatibilidade, idempotencia quando aplicavel, observabilidade e testes. Mudancas REST exigem atualizacao do OpenAPI manual enquanto este for o mecanismo vigente.
+
+### Criterios de aceite de comunicacoes
+
+Email, in-app, push e mensagens operacionais devem declarar gatilho, destinatario, canal, conteudo minimo, locale/CTA quando aplicavel, retry/duplicidade, indisponibilidade e auditabilidade. Nenhuma comunicacao pode revelar dados de outro tenant ou substituir autorizacao backend.
+
+### Criterios de aceite de regras de negocio
+
+Toda regra relevante deve explicitar pre-condicoes, atores autorizados, tenant, happy path, casos de borda, invariantes, erros de dominio, efeitos colaterais, concorrencia/idempotencia, observabilidade e testes proporcionais ao risco.
+
+### Definition of Done obrigatoria
+
+Uma issue so deve ser concluida quando, conforme aplicavel:
+
+- criterios de aceite passam;
+- testes unitarios e de integracao/contrato passam;
+- autorizacao negativa e tentativa cross-tenant estao cobertas para recurso tenant-bound;
+- lint/typecheck/build passam;
+- backend inicia em Docker e health/OpenAPI sao validados quando backend foi alterado;
+- docs/OpenAPI foram atualizados;
+- findings criticos/altos relevantes foram corrigidos, mitigados ou possuem aceite formal de risco;
+- auditoria/telemetria necessarias existem;
+- nao ha secrets ou dados sensiveis indevidos no diff;
+- rollback ou estrategia de reversao existe para mudancas de risco.
+
+### Findings que bloqueiam merge/release
+
+Por padrao, finding critico confirmado bloqueia merge/release. Exemplos: cross-tenant leak, auth bypass, segredo valido exposto e execucao remota exploravel. Findings altos normalmente bloqueiam release e exigem correcao ou aceite formal de risco com mitigacao, responsavel e prazo.

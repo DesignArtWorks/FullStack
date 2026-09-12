@@ -1,6 +1,6 @@
 # Roadmap — Gestao Inteligente de Escalas
 
-Data de referencia: 2026-06-30.
+Data de referencia: 2026-09-07.
 
 ## Estrategia de entrega
 
@@ -147,6 +147,136 @@ Status atual:
 - **DevOps:** health checks, Compose por ambiente, secrets obrigatorios fora de dev, backups e CI/CD.
 - **Documentacao:** manter `docs/` como fonte conceitual e atualizar OpenAPI manual ao mudar REST.
 - **Qualidade:** ampliar testes unitarios de dominio e testes de integracao de autenticacao, JPA, JWT e endpoints.
+- **Product/Design/Go-to-Market assistido por IA:** usar o fluxo definido em `docs/ferramentas-ai-product-design-go-to-market.md`, mantendo plugins fora do runtime e submetendo outputs a revisao humana, seguranca, LGPD e governanca do repositorio.
+- **AppSec e criterios de aceite:** aplicar `docs/appsec-criterios-de-aceite.md` em contratos, comunicacoes e regras de negocio, com DoR/DoD e gates de seguranca proporcionais ao risco.
+
+## Trilha transversal — AppSec e criterios de aceite
+
+Referencia operacional: `docs/appsec-criterios-de-aceite.md`.
+
+### A0 — Imediato: baseline de seguranca
+
+- Adotar Codex Security como ferramenta assistiva prioritaria para scans, analise e investigacao de seguranca.
+- Manter CI/GitHub como autoridade de merge e rastreabilidade.
+- Evoluir scanners de dependencias, secrets e SAST/CodeQL quando disponiveis na plataforma.
+- Classificar findings por impacto, explorabilidade, superficie e risco multi-tenant.
+- Findings criticos como cross-tenant leak, auth bypass, segredo valido exposto ou execucao remota exploravel bloqueiam merge/release.
+
+### A1 — Definition of Ready para novas features
+
+Antes de implementar feature relevante, registrar conforme aplicavel:
+
+- problema, ator e valor;
+- criterios de aceite funcionais;
+- contrato tecnico ou declaracao de que nao existe mudanca de contrato;
+- regras de negocio e invariantes;
+- impacto de seguranca, autorizacao e multi-tenant;
+- impacto LGPD/compliance;
+- estados UX relevantes;
+- dependencias externas e riscos.
+
+### A2 — Contratos explicitos
+
+- REST/BFF deve declarar request, response, codigos de erro, autenticacao, autorizacao, tenant e compatibilidade.
+- OpenAPI deve acompanhar mudancas REST.
+- Eventos/mensageria devem possuir nome/versao, produtor/consumidor, retry, idempotencia e minimizacao de dados quando aplicavel.
+- Mudancas breaking exigem estrategia explicita de migracao/versionamento.
+
+### A3 — Comunicacoes confiaveis
+
+- Email, in-app, push e mensagens operacionais devem declarar gatilho, destinatario, canal, conteudo minimo, locale, CTA, retry e comportamento em indisponibilidade.
+- Links devem respeitar autorizacao no destino.
+- Falha de canal secundario nao deve corromper operacao principal salvo regra de negocio explicita.
+- Claims legais/comerciais exigem evidencia e revisao adequada.
+
+### A4 — Regras de negocio testaveis
+
+Cada regra relevante deve explicitar pre-condicoes, atores autorizados, tenant, happy path, bordas, invariantes, erros de dominio, efeitos colaterais, idempotencia/concorrencia, observabilidade e testes.
+
+### A5 — Definition of Done
+
+Uma issue so e concluida quando, conforme aplicavel:
+
+- criterios de aceite passam;
+- testes unitarios e integracao/contrato passam;
+- autorizacao negativa e tentativa cross-tenant foram cobertas para recurso tenant-bound;
+- lint/typecheck/build passam;
+- OpenAPI/docs foram atualizados;
+- findings de seguranca relevantes foram tratados;
+- auditoria/telemetria necessarias existem;
+- nenhum segredo ou dado sensivel indevido aparece no diff;
+- rollback ou estrategia de reversao e conhecida para mudancas de risco.
+
+## Trilha transversal — Product, Design e Go-to-Market assistidos por plugins
+
+Esta trilha nao substitui as fases de produto. Ela acompanha todas as fases e define em que momento as ferramentas adotadas agregam valor.
+
+| Etapa | Ferramentas prioritarias | Resultado esperado |
+|---|---|---|
+| Estrategia | Business Strategy Builder, Deep Research | escolhas, trade-offs, nichos, SWOT/Oceano Azul e hipoteses de mercado |
+| Posicionamento | B2B Messaging Workshop | ICP, alternativas, diferenciacao, proposta de valor, claims e evidencias |
+| Discovery | Product Design, Mobbin, BuildBetter.ai quando houver base de evidencias | jornadas, problemas, referencias, hipoteses e criterios de aceitacao |
+| UI/Design System | Figma, Product Design, Themely, Font Pairing | tokens, componentes, variantes, responsividade e acessibilidade |
+| Implementacao | Codex/GitHub, Figma e Build Web Data Visualization quando aplicavel | codigo alinhado ao design e aos contratos, com testes e gates |
+| Marketing | B2B Messaging Workshop, Creative Production, Strapi/Next.js | homepage, landing pages, campanhas e assets coerentes com claims validados |
+| Comercial | Sales | playbook, discovery comercial, demos, business cases, pipeline e follow-up |
+| Analytics | Data Analytics, Build Web Data Visualization | metricas definidas, dashboards, funil trial -> paid e aprendizado de produto |
+| Evidencias | BuildBetter.ai | consolidacao de feedback/calls/documentos para priorizacao baseada em evidencias |
+
+### Roadmap operacional da trilha
+
+#### T0 — Imediato: governanca
+
+- Adotar `docs/ferramentas-ai-product-design-go-to-market.md` como referencia operacional.
+- Nao adicionar SDKs dos plugins ao runtime sem caso de uso de produto, ADR e avaliacao de seguranca/LGPD.
+- Usar dados ficticios ou anonimizados em design, marketing e demonstracoes sempre que possivel.
+- Manter requisitos, regras de negocio e decisoes finais no repositorio.
+
+#### T1 — Estrategia e positioning
+
+- Revisar Strategy Canvas/Oceano Azul e SWOT com Business Strategy Builder + Deep Research.
+- Executar B2B Messaging Workshop para consolidar ICP, alternativas, diferenciacao e proposta de valor.
+- Criar matriz de claims: comprovado, hipotese ou proibido ate evidencia.
+- Refletir decisoes aprovadas em `docs/Analise-Produto-Arquitetura-Concorrencia-Oceano-Azul.md`, `docs/okr.md` e conteudo editorial quando necessario.
+
+#### T2 — UX/UI antes de features de alto custo
+
+- Usar Mobbin para benchmarking de padroes, sem copiar identidade ou assets proprietarios.
+- Usar Product Design para auditar fluxos e prototipar jornadas criticas.
+- Consolidar telas aprovadas no Figma e evoluir Design System/tokens antes de espalhar estilos ad hoc no Next.js.
+- Tratar acessibilidade, loading, empty, error, disabled e responsividade como criterios de aceite.
+
+#### T3 — Implementacao assistida
+
+Para mudancas relevantes, o Codex deve seguir a ordem obrigatoria:
+
+1. problema;
+2. impacto arquitetural;
+3. alternativas;
+4. recomendacao;
+5. riscos;
+6. testes;
+7. seguranca;
+8. impacto multi-tenant;
+9. implementacao.
+
+Figma/Product Design servem de entrada visual; regras de negocio e autorizacao continuam no Spring Boot. Build Web Data Visualization deve apoiar dashboards e visualizacoes quantitativas quando houver metrica definida.
+
+#### T4 — Go-to-market
+
+- Usar B2B Messaging Workshop como fonte para narrativa de homepage, landing pages e sales deck.
+- Usar Creative Production para campanhas e assets dentro da identidade aprovada.
+- Usar Sales para estruturar discovery, demo, business case, proposta e follow-up.
+- Manter Strapi como fonte editorial; Spring Boot permanece dono de leads operacionais, trial, billing e limites.
+
+#### T5 — Analytics e aprendizado continuo
+
+- Instrumentar eventos de produto somente apos definir finalidade, minimizacao, tenant e retencao.
+- Usar Data Analytics para acquisition, activation, engagement, retention, revenue e conversion.
+- Usar Build Web Data Visualization para dashboards do produto e da operacao.
+- Introduzir BuildBetter.ai quando houver volume suficiente de feedback, calls e documentos para apoiar priorizacao baseada em evidencias.
+
+Ferramentas explicitamente fora do conjunto adotado neste momento: **UX Pilot, Zoho CRM e Mailchimp**. A adocao futura depende de necessidade comprovada, custo, privacidade, integracao e sobreposicao com a stack atual.
 
 ## Nichos prioritarios
 
