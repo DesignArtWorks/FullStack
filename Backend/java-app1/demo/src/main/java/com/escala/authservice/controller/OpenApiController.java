@@ -134,6 +134,17 @@ public class OpenApiController {
 
         Map<String, Object> components = new LinkedHashMap<>();
         components.put("securitySchemes", Map.of("bearerAuth", securityScheme));
+        components.put("schemas", Map.of("ApiError", Map.of(
+                "type", "object",
+                "required", List.of("code", "message", "status", "errorId", "correlationId"),
+                "properties", Map.of(
+                        "code", Map.of("type", "string", "example", "VALIDATION_ERROR"),
+                        "message", Map.of("type", "string", "example", "Dados informados sao invalidos."),
+                        "status", Map.of("type", "integer", "example", 400),
+                        "errorId", Map.of("type", "string", "example", "ERR-550e8400-e29b-41d4-a716-446655440000"),
+                        "correlationId", Map.of("type", "string", "example", "550e8400-e29b-41d4-a716-446655440000")
+                )
+        )));
         return components;
     }
 
@@ -355,6 +366,8 @@ public class OpenApiController {
         paths.put("/api/v1/webhooks/chatbot", pathPost(postPublic("IA", "Webhook do Chatbot", "Recebe payloads simulados de mensagens do WhatsApp/Telegram para analise de trocas via IA.", "ChatbotWebhookRequest")));
 
         paths.put("/actuator/health", pathGet(getPublic("Operacional", "Health check", "Retorna o estado de saude do backend para validacao local, Docker e monitoramento.")));
+        paths.put("/actuator/health/liveness", pathGet(getPublic("Operacional", "Liveness", "Confirma que o processo esta vivo sem depender de servicos externos.")));
+        paths.put("/actuator/health/readiness", pathGet(getPublic("Operacional", "Readiness", "Confirma que banco e Redis necessarios para atender trafego estao disponiveis.")));
 
         return paths;
     }
@@ -769,11 +782,22 @@ public class OpenApiController {
         } else {
             responses.put("200", Map.of("description", "Operacao realizada com sucesso."));
         }
-        responses.put("400", Map.of("description", "Requisicao invalida ou regra de dominio violada."));
-        responses.put("401", Map.of("description", "Token ausente, invalido ou expirado."));
-        responses.put("403", Map.of("description", "Usuario autenticado sem permissao para a operacao."));
-        responses.put("404", Map.of("description", "Recurso nao encontrado."));
+        Map<String, Object> errorContent = Map.of("content", Map.of("application/json", Map.of(
+                "schema", Map.of("$ref", "#/components/schemas/ApiError"))));
+        responses.put("400", response("Requisicao invalida ou regra de dominio violada.", errorContent));
+        responses.put("401", response("Token ausente, invalido ou expirado.", errorContent));
+        responses.put("403", response("Usuario autenticado sem permissao para a operacao.", errorContent));
+        responses.put("404", response("Recurso nao encontrado.", errorContent));
+        responses.put("409", response("Conflito com o estado atual do recurso.", errorContent));
+        responses.put("429", response("Limite de requisicoes excedido.", errorContent));
+        responses.put("500", response("Falha interna sem exposicao de detalhes tecnicos.", errorContent));
         return responses;
+    }
+
+    private Map<String, Object> response(String description, Map<String, Object> content) {
+        Map<String, Object> response = new LinkedHashMap<>(content);
+        response.put("description", description);
+        return response;
     }
 
     private String inferResponseName(String summary, String requestName) {

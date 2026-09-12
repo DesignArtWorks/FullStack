@@ -17,7 +17,8 @@ class SecurityConfigurationCorsTest {
         SecurityConfiguration configuration = new SecurityConfiguration(
                 mock(JwtAuthenticationFilter.class),
                 mock(TenantIsolationFilter.class),
-                mock(AuthenticationProvider.class)
+                mock(AuthenticationProvider.class),
+                mock(SecurityErrorHandler.class)
         );
         ReflectionTestUtils.setField(configuration, "allowedOrigins", "https://app.escala.example");
 
@@ -28,5 +29,6 @@ class SecurityConfigurationCorsTest {
         assertNull(cors.checkOrigin("https://evil.example"));
         assertEquals(Boolean.FALSE, cors.getAllowCredentials());
         assertTrue(cors.getAllowedHeaders().contains("Authorization"));
+        assertTrue(cors.getAllowedHeaders().contains("X-Correlation-ID"));
     }
 }
