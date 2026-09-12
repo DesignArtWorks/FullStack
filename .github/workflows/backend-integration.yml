@@ -165,6 +165,31 @@ jobs:
           -v "$PWD:/workspace" -w /workspace node:22-bookworm-slim
           sh -c "npm ci && npm run build"
 
+  frontend-security-e2e:
+    name: Frontend / Security E2E
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        run: |
+          git init .
+          git remote add origin "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git"
+          git fetch --depth=1 origin "$GITHUB_SHA"
+          git checkout --detach FETCH_HEAD
+
+      - name: Require Docker
+        run: docker info
+
+      - name: Run Auth/BFF/Tenant security suite
+        working-directory: Frontend/web-app3/escala
+        run: >-
+          docker run --rm
+          -e CI=true
+          -v "$PWD:/workspace" -w /workspace
+          mcr.microsoft.com/playwright:v1.55.0-noble
+          bash -lc "corepack enable && corepack prepare pnpm@10.33.3 --activate &&
+          pnpm install --frozen-lockfile && pnpm run test:e2e:ci"
+
   required-gate:
     name: CI / Required Gate
     if: always()
@@ -174,6 +199,7 @@ jobs:
       - backend-integration
       - frontend
       - cms
+      - frontend-security-e2e
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
@@ -186,6 +212,7 @@ jobs:
             "${{ needs.backend-integration.result }}"
             "${{ needs.frontend.result }}"
             "${{ needs.cms.result }}"
+            "${{ needs.frontend-security-e2e.result }}"
           )
           printf 'Required job result: %s\n' "${results[@]}"
           for result in "${results[@]}"; do
