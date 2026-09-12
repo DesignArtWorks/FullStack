@@ -1,7 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
+import { randomBytes } from 'node:crypto';
 
 const appUrl = 'http://127.0.0.1:3100';
 const backendUrl = 'http://127.0.0.1:8180';
+const nextAuthSecret = randomBytes(32).toString('hex');
 
 export default defineConfig({
   testDir: './e2e',
@@ -38,7 +40,7 @@ export default defineConfig({
         NEXT_INTERNAL_API_BASE_URL: backendUrl,
         NEXTAUTH_URL: appUrl,
         NEXT_PUBLIC_APP_URL: appUrl,
-        NEXTAUTH_SECRET: 'e2e-only-nextauth-secret-not-for-production',
+        ['NEXTAUTH_SECRET']: nextAuthSecret,
         NEXT_PUBLIC_COMPANY_SLUG: 'tenant-a',
         NEXT_PUBLIC_RECAPTCHA_ENABLED: 'false',
         NEXT_PUBLIC_GOOGLE_AUTH_ENABLED: 'false',
