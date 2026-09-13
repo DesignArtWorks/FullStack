@@ -217,8 +217,7 @@ jobs:
           mkdir -p sca-output
           docker run --rm --cap-drop ALL --security-opt no-new-privileges \
             -v "$PWD:/workspace" -w /workspace maven:3.9-eclipse-temurin-25 \
-            mvn -B --no-transfer-progress org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom \
-            -DoutputFormat=json -DincludeTestScope=true -DoutputDirectory=/workspace/sca-output
+            sh -c 'mvn -B --no-transfer-progress org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom -DoutputFormat=json -DincludeTestScope=true -DoutputDirectory=/tmp/sca-output && cp /tmp/sca-output/bom.json /workspace/sca-output/bom.json'
 
       - name: Block High and Critical vulnerabilities in Maven, npm and pnpm
         run: |
