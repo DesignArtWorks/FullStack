@@ -217,6 +217,7 @@ jobs:
         working-directory: Backend/java-app1/demo
         run: |
           mkdir -p sca-output
+          chmod -R a+rwx sca-output
           docker run --rm --cap-drop ALL --security-opt no-new-privileges \
             -v "$PWD:/workspace" -w /workspace maven:3.9-eclipse-temurin-25 \
             sh -c 'mvn -B --no-transfer-progress org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom -DoutputFormat=json -DincludeTestScope=true -DoutputDirectory=/tmp/sca-output && cp /tmp/sca-output/bom.json /workspace/sca-output/bom.json'
