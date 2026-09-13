@@ -92,10 +92,10 @@ jobs:
           # filesystem/socket mounts and no published port. PR code runs in the
           # unprivileged Maven container and can control only this nested daemon.
           docker run -d --name "$daemon" --network "$network" --network-alias dind \
-            --privileged -e DOCKER_TLS_CERTDIR= docker:27.5.1-dind-rootless@sha256:e2ac8e8f66ae21a060b0a8e3005c70f6ed9441aabf409434463d1f6eecd38026
+            --privileged -e DOCKER_TLS_CERTDIR= docker:27.5.1-dind@sha256:aa3df78ecf320f5fafdce71c659f1629e96e9de0968305fe1de670e0ca9176ce
           ready=false
           for attempt in {1..30}; do
-            if docker exec --user 1000 -e DOCKER_HOST=unix:///run/user/1000/docker.sock "$daemon" docker info >/dev/null 2>&1; then
+            if docker exec -e DOCKER_HOST=unix:///var/run/docker.sock "$daemon" docker info >/dev/null 2>&1; then
               ready=true
               break
             fi
@@ -213,11 +213,12 @@ jobs:
 
       - name: Resolve Maven dependency graph into CycloneDX
         working-directory: Backend/java-app1/demo
-        run: >-
+        run: |
+          mkdir -p sca-output
           docker run --rm --cap-drop ALL --security-opt no-new-privileges
-          -v "$PWD:/workspace" -w /workspace maven:3.9-eclipse-temurin-25
-          mvn -B --no-transfer-progress org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom
-          -DoutputFormat=json -DincludeTestScope=true -DoutputDirectory=/workspace/sca-output
+            -v "$PWD:/workspace" -w /workspace maven:3.9-eclipse-temurin-25 \
+            mvn -B --no-transfer-progress org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom \
+            -DoutputFormat=json -DincludeTestScope=true -DoutputDirectory=/workspace/sca-output
 
       - name: Block High and Critical vulnerabilities in Maven, npm and pnpm
         run: |
