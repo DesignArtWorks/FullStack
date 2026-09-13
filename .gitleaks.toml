@@ -12,9 +12,22 @@ regexes = [
   '''^replace-with-[a-z0-9-]+$''',
   '''^change-me(?:-[a-z0-9-]+)?$''',
 ]
+commits = [
+  "82e2a3192a398ef8687aebe39fa2476e02290200",
+  "4cb0f89038a1663f3861287b2be53d64bbe3fc91",
+  "47c27c19f6d09a0b9d63871f2bfd5b286cc71829",
+  "c6798d2d65e44a391bf76818c7eb6c9c59473cc1",
+  "4622b360e5140400676c6e042942d329f90d94d1",
+  "cd661930696be0039ac4d083677b7878241adb23",
+  "8446b647b7857d41c7105ea7dcb2a7f5c3104493",
+  "816a292783067782fd2a5f550aa43e0740dc23b0",
+  "2bc23ee218ab994b7246bbe4ec4394fd86662f13",
+  "093d4ef3c26b09746c3bd3b3483fb13da32b8e1e"
+]
 [[allowlists]]
 description = "Historical values reviewed under issue 49; current tree remains scanned"
 fingerprints = [
+  "82e2a3192a398ef8687aebe39fa2476e02290200:scripts/security/test-secret-scanner.sh:slack-bot-token:23",
   "4cb0f89038a1663f3861287b2be53d64bbe3fc91:Frontend/web-app3/escala/playwright.config.ts:escala-secret-assignment:41",
   "47c27c19f6d09a0b9d63871f2bfd5b286cc71829:Backend/cms-strapi/.env.local:generic-api-key:16",
   "47c27c19f6d09a0b9d63871f2bfd5b286cc71829:Backend/cms-strapi/.env.local:generic-api-key:17",

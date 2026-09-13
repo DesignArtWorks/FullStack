@@ -95,16 +95,16 @@ jobs:
             --privileged -e DOCKER_TLS_CERTDIR= docker:27.5.1-dind-rootless@sha256:e2ac8e8f66ae21a060b0a8e3005c70f6ed9441aabf409434463d1f6eecd38026
           ready=false
           for attempt in {1..30}; do
-  if docker exec --user 1000 -e DOCKER_HOST=unix:///run/user/1000/docker.sock "$daemon" docker info >/dev/null 2>&1; then
+            if docker exec --user 1000 -e DOCKER_HOST=unix:///run/user/1000/docker.sock "$daemon" docker info >/dev/null 2>&1; then
               ready=true
               break
             fi
             sleep 2
-done
-if [ "$ready" != true ]; then
-  docker logs "$daemon" || true
-  exit 1
-fi
+          done
+          if [ "$ready" != true ]; then
+            docker logs "$daemon" || true
+            exit 1
+          fi
           docker run --rm --network "$network" --cap-drop ALL --security-opt no-new-privileges \
             -e DOCKER_HOST=tcp://dind:2375 -e TESTCONTAINERS_HOST_OVERRIDE=dind \
             -e TESTCONTAINERS_RYUK_DISABLED=true \
