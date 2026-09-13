@@ -20,7 +20,8 @@ blocked() {
 }
 suffix=$(LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 36)
 blocked github "token=ghp_$suffix"
-blocked slack "token=xoxb-123456789012-123456789012-$(printf '%s' "$suffix" | cut -c 1-24)"
+slack_prefix="xox"; slack_prefix="${slack_prefix}b"
+blocked slack "token=${slack_prefix}-123456789012-123456789012-$(printf '%s' "$suffix" | cut -c 1-24)"
 blocked aws "access_key=AKIA$(LC_ALL=C tr -dc 'A-Z0-9' < /dev/urandom | head -c 16)"
 blocked pem "$(printf '%s\n' '-----BEGIN RSA PRIVATE'' KEY-----' 'c3ludGhldGljLW5vdC1hLXJlYWwta2V5' '-----END RSA PRIVATE'' KEY-----')"
 printf '%s\n' 'NEXTAUTH_SECRET="ci-only-nextauth-secret-not-for-production"' |

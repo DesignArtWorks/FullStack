@@ -35,7 +35,7 @@ jobs:
         run: |
           image=zricethezav/gitleaks:v8.24.2@sha256:b5918eb91b8d2473cec722f066abb4352e4ffdc4ec9f4283ec143aba9ec9ebc4
           docker run --rm -v "$PWD:/repo:ro" --entrypoint sh "$image" /repo/scripts/security/test-secret-scanner.sh
-          docker run --rm -v "$PWD:/repo:ro" "$image" git /repo --log-opts=--all --config /repo/.gitleaks.toml --redact=100 --no-banner
+          docker run --rm -v "$PWD:/repo:ro" "$image" git --config /repo/.gitleaks.toml --log-opts=--all --redact=100 --no-banner /repo
 
       - name: Reject hardcoded credentials in tracked files
         shell: pwsh
@@ -95,13 +95,16 @@ jobs:
             --privileged -e DOCKER_TLS_CERTDIR= docker:27.5.1-dind-rootless@sha256:e2ac8e8f66ae21a060b0a8e3005c70f6ed9441aabf409434463d1f6eecd38026
           ready=false
           for attempt in {1..30}; do
-            if docker exec -e DOCKER_HOST=unix:///run/user/1000/docker.sock "$daemon" docker info >/dev/null 2>&1; then
+  if docker exec --user 1000 -e DOCKER_HOST=unix:///run/user/1000/docker.sock "$daemon" docker info >/dev/null 2>&1; then
               ready=true
               break
             fi
             sleep 2
-          done
-          test "$ready" = true
+done
+if [ "$ready" != true ]; then
+  docker logs "$daemon" || true
+  exit 1
+fi
           docker run --rm --network "$network" --cap-drop ALL --security-opt no-new-privileges \
             -e DOCKER_HOST=tcp://dind:2375 -e TESTCONTAINERS_HOST_OVERRIDE=dind \
             -e TESTCONTAINERS_RYUK_DISABLED=true \
@@ -214,7 +217,7 @@ jobs:
           docker run --rm --cap-drop ALL --security-opt no-new-privileges
           -v "$PWD:/workspace" -w /workspace maven:3.9-eclipse-temurin-25
           mvn -B --no-transfer-progress org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom
-          -DoutputFormat=json -DincludeTestScope=true
+          -DoutputFormat=json -DincludeTestScope=true -DoutputDirectory=/workspace/sca-output
 
       - name: Block High and Critical vulnerabilities in Maven, npm and pnpm
         run: |
@@ -223,7 +226,7 @@ jobs:
           # No default ignore list. Exceptions require formal, reviewed risk acceptance.
           docker run --rm -v "$PWD:/repo:ro" "$image" sbom \
             --severity HIGH,CRITICAL --exit-code 1 --ignorefile /dev/null \
-            /repo/Backend/java-app1/demo/target/bom.json
+            /repo/Backend/java-app1/demo/sca-output/bom.json
           docker run --rm -v "$PWD:/repo:ro" "$image" fs \
             --scanners vuln --severity HIGH,CRITICAL --exit-code 1 --ignorefile /dev/null \
             --include-dev-deps --skip-dirs '**/node_modules' --skip-dirs '**/target' /repo
