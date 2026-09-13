@@ -75,7 +75,7 @@ jobs:
       - name: Require Docker for Testcontainers
         run: docker info
 
-      - name: Run integration tests in a disposable rootless daemon
+      - name: Run integration tests in a disposable nested daemon
         working-directory: Backend/java-app1/demo
         shell: bash
         run: |
@@ -87,8 +87,10 @@ jobs:
             docker network rm "$network" >/dev/null 2>&1 || true
           }
           trap cleanup EXIT
+          mkdir -p target
+          chmod -R a+rwx target
           docker network create "$network"
-          # Privilege is used only by the official rootless daemon, with no host
+          # Privilege is used only by the disposable nested daemon, with no host
           # filesystem/socket mounts and no published port. PR code runs in the
           # unprivileged Maven container and can control only this nested daemon.
           docker run -d --name "$daemon" --network "$network" --network-alias dind \
