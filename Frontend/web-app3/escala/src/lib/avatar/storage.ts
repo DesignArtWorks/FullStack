@@ -3,6 +3,7 @@ import 'server-only';
 import { mkdir, readdir, readFile, unlink, writeFile } from 'fs/promises';
 import path from 'path';
 import sharp from 'sharp';
+import { isAvatarOwner, ownsAvatar, type AvatarOwner } from './owner';
 
 const PRIVATE_AVATAR_DIR = path.join(process.cwd(), '.data', 'private', 'avatars');
 const ALLOWED_AVATAR_MIME_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -112,29 +113,27 @@ export async function sanitizeAvatarImage(bytes: Uint8Array) {
   };
 }
 
-export async function replaceUserAvatarFile(userId: string, bytes: Uint8Array, format: AvatarFormat) {
+export async function replaceUserAvatarFile(owner: AvatarOwner, bytes: Uint8Array, format: AvatarFormat) {
   const directory = await ensurePrivateAvatarDir();
-  const safeUserId = userId.replace(/[^A-Za-z0-9-]/g, '');
-
-  if (!safeUserId) {
-    throw new Error('Invalid user id for avatar storage');
+  if (!isAvatarOwner(owner)) {
+    throw new Error('Invalid avatar owner');
   }
 
   const existingFiles = await readdir(directory);
   await Promise.all(
     existingFiles
-      .filter((name) => name.startsWith(`${safeUserId}-`))
+      .filter((name) => ownsAvatar(owner, name))
       .map((name) => unlink(path.join(directory, name)).catch(() => undefined)),
   );
 
-  const fileName = `${safeUserId}-${crypto.randomUUID()}${format.extension}`;
+  const fileName = `${owner.companyId}-${owner.userId}-${crypto.randomUUID()}${format.extension}`;
   await writeFile(path.join(directory, fileName), bytes);
   return fileName;
 }
 
-export async function readPrivateAvatarFile(fileName: string) {
+export async function readPrivateAvatarFile(owner: AvatarOwner, fileName: string) {
   const safeFileName = sanitizeAvatarFileName(fileName);
-  if (!safeFileName) {
+  if (!safeFileName || !ownsAvatar(owner, safeFileName)) {
     return null;
   }
 

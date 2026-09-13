@@ -4,6 +4,7 @@ const port = Number(process.env.E2E_BACKEND_PORT ?? 8180);
 const users = {
   'alice@tenant-a.test': { id: '10000000-0000-0000-0000-000000000001', tenant: 'tenant-a' },
   'bob@tenant-b.test': { id: '20000000-0000-0000-0000-000000000002', tenant: 'tenant-b' },
+  'carol@tenant-a.test': { id: '10000000-0000-0000-0000-000000000003', tenant: 'tenant-a' },
 };
 
 const json = (response, status, body, headers = {}) => {
@@ -47,6 +48,23 @@ createServer(async (request, response) => {
   }
 
   const tenant = tenantFromAuthorization(request.headers.authorization);
+  const avatarMatch = url.pathname.match(/^\/api\/v1\/users\/([^/]+)\/avatar-access$/);
+  if (request.method === 'GET' && avatarMatch) {
+    if (!tenant) return json(response, 401, { code: 'AUTHENTICATION_REQUIRED' });
+    const owner = Object.values(users).find(candidate => candidate.id === avatarMatch[1] && candidate.tenant === tenant);
+    if (!owner) return json(response, 404, { code: 'RESOURCE_NOT_FOUND' });
+    return json(response, 200, { userId: owner.id, companyId: tenant === 'tenant-a'
+      ? 'aaaaaaaa-0000-0000-0000-000000000001' : 'bbbbbbbb-0000-0000-0000-000000000002' });
+  }
+  if (request.method === 'GET' && url.pathname === '/api/v1/users/me') {
+    let subject;
+    try { subject = JSON.parse(Buffer.from(request.headers.authorization.split('.')[1], 'base64url').toString()).sub; }
+    catch { return json(response, 401, { code: 'AUTHENTICATION_REQUIRED' }); }
+    const user = Object.values(users).find(candidate => candidate.id === subject && candidate.tenant === tenant);
+    if (!user) return json(response, 401, { code: 'AUTHENTICATION_REQUIRED' });
+    return json(response, 200, { id: user.id, active: true, companyId: tenant === 'tenant-a'
+      ? 'aaaaaaaa-0000-0000-0000-000000000001' : 'bbbbbbbb-0000-0000-0000-000000000002' });
+  }
   const companyMatch = url.pathname.match(/^\/api\/v1\/companies\/([^/]+)$/);
   if (request.method === 'GET' && companyMatch) {
     const requestedTenant = companyMatch[1];

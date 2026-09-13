@@ -2,6 +2,5 @@
  * user-account router
  */
 
-import { factories } from '@strapi/strapi';
-
-export default factories.createCoreRouter('api::user-account.user-account');
+// Retain the legacy schema for controlled retention, never expose end-user CRUD.
+export default { routes: [] };

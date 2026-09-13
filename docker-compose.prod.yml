@@ -68,7 +68,7 @@ services:
       redis:
         condition: service_healthy
     ports:
-      - "${BACKEND_PORT:-8080}:8080"
+      - "127.0.0.1:${BACKEND_PORT:-8080}:8080"
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8080/actuator/health | grep '\"status\":\"UP\"' >/dev/null"]
       interval: 10s
@@ -107,7 +107,7 @@ services:
       postgres:
         condition: service_healthy
     ports:
-      - "${STRAPI_PORT:-1337}:1337"
+      - "127.0.0.1:${STRAPI_PORT:-1337}:1337"
     volumes:
       - escala_prod_uploads:/opt/app/public/uploads
     healthcheck:
