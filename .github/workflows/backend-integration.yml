@@ -231,7 +231,7 @@ jobs:
             --severity HIGH,CRITICAL --exit-code 1 --ignorefile /dev/null \
             /repo/Backend/java-app1/demo/sca-output/bom.json
           docker run --rm -v "$PWD:/repo:ro" "$image" fs \
-            --scanners vuln --severity HIGH,CRITICAL --exit-code 1 --ignorefile /dev/null \
+            --scanners vuln --offline-scan --severity HIGH,CRITICAL --exit-code 1 --ignorefile /dev/null \
             --include-dev-deps --skip-dirs '**/node_modules' --skip-dirs '**/target' /repo
 
   frontend-security-e2e:
