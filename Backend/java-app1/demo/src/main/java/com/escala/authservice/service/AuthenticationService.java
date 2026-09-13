@@ -282,7 +282,7 @@ public class AuthenticationService {
                                         .orElseGet(() -> roleRepository.save(Role.builder().name(roleNameToAssign).build()))
                         )))
                         .theme(company.getTheme() == null ? "system" : company.getTheme())
-                        .avatarUrl(profile.picture())
+                        .avatarUrl(null)
                         .active(true)
                         .company(company)
                         .build());
@@ -295,9 +295,7 @@ public class AuthenticationService {
             throw new IllegalArgumentException("Usuario inativo");
         }
 
-        if ((user.getAvatarUrl() == null || user.getAvatarUrl().isBlank()) && profile.picture() != null && !profile.picture().isBlank()) {
-            user.setAvatarUrl(profile.picture());
-        }
+        // External provider images are not persisted or exposed: avatars are private application assets.
 
         if ((user.getUsername() == null || user.getUsername().isBlank() || user.getUsername().equalsIgnoreCase(user.getEmail()))
                 && profile.name() != null && !profile.name().isBlank()) {

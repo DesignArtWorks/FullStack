@@ -36,7 +36,7 @@ class TeamInvitationIntegrationTest extends AbstractIntegrationTest {
         firstInvitation = teamInvitationRepository.findById(firstIssued.invitation().getId()).orElseThrow();
 
         assertThat(firstIssued.plainToken()).isNotBlank();
-        assertThat(firstInvitation.getToken()).isNull();
+        assertThat(firstInvitation.getTokenHash()).isNotEqualTo(firstIssued.plainToken());
         assertThat(firstInvitation.getTokenHash()).hasSize(64);
         assertThat(firstInvitation.getTokenPreview()).isNotBlank();
         assertThat(firstInvitation.isActive()).isFalse();

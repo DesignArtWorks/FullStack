@@ -67,7 +67,7 @@ export function normalizeAvatarUrl(url?: string | null): string {
 
   // 3. Legado: uploads antigos em public/ do App.
   if (url.startsWith('/uploads/avatars')) {
-    return url;
+    return '';
   }
 
   // 4. Fallback para Strapi caso algum avatar antigo tenha vindo de lá

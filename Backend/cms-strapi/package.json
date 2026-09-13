@@ -4,6 +4,7 @@
   "private": true,
   "description": "A Strapi application",
   "scripts": {
+    "test:security": "node --experimental-strip-types --test tests/*.test.mjs",
     "build": "strapi build",
     "console": "strapi console",
     "deploy": "strapi deploy",
@@ -16,9 +17,9 @@
     "upgrade:dry": "npx @strapi/upgrade latest --dry"
   },
   "dependencies": {
-    "@strapi/plugin-cloud": "5.28.0",
-    "@strapi/plugin-users-permissions": "5.28.0",
-    "@strapi/strapi": "5.28.0",
+    "@strapi/plugin-cloud": "5.37.0",
+    "@strapi/plugin-users-permissions": "5.37.0",
+    "@strapi/strapi": "5.37.0",
     "fs-extra": "^10.0.0",
     "mime-types": "^2.1.27",
     "pg": "8.8.0",

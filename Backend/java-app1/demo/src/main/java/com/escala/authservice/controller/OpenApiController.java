@@ -189,6 +189,9 @@ public class OpenApiController {
                 null
         ));
         paths.put("/api/v1/users/me/password", pathPatch(patch("Usuarios", "Alterar minha senha", "Altera a senha do usuario autenticado apos validar a senha atual.", "ChangePasswordRequest")));
+        paths.put("/api/v1/users/{id}/avatar-access", pathGet(get("Usuarios", "Autorizar leitura de avatar",
+                "Autoriza o proprio usuario ou colega ativo da mesma empresa ativa. Empresa e identidade sao revalidadas no Spring; nao aceita tenant do cliente. Retorna apenas userId/companyId para o BFF, sem dados de perfil. 401 sem autenticacao, 403 para principal inativo, 404 para proprietario inexistente, inativo ou de outra empresa. Resposta no-store.",
+                pathParam("id", "ID do proprietario do avatar."))));
         paths.put("/api/v1/users/{id}/roles", path(
                 null,
                 post("Usuarios", "Conceder role", "Adiciona uma role ao usuario informado.", "RoleChangeRequest", pathParam("id", "ID do usuario.")),
@@ -802,6 +805,7 @@ public class OpenApiController {
 
     private String inferResponseName(String summary, String requestName) {
         String s = summary.toLowerCase();
+        if (s.equals("autorizar leitura de avatar")) return "AvatarAccessResponse";
         if (s.contains("autenticar") || s.contains("registrar usuario") || s.contains("google")) {
             return "AuthResponse";
         }
@@ -901,6 +905,10 @@ public class OpenApiController {
                         "email", Map.of("type", "string", "example", "admin@escala.local")
                     )
                 ));
+                break;
+            case "AvatarAccessResponse":
+                properties.put("userId", uuidSchema());
+                properties.put("companyId", uuidSchema());
                 break;
             case "UserResponse":
                 properties.put("id", uuidSchema());
