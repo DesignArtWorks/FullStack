@@ -60,3 +60,9 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+# Local validation artifacts; never publish raw security reports or fixtures.
+/.security-artifacts/
+/sca-*.json
+
+# Java build output
+**/target/

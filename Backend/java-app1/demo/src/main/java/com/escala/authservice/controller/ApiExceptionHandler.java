@@ -13,6 +13,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
 
@@ -23,6 +24,18 @@ public class ApiExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiError> handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
         return error(HttpStatus.FORBIDDEN, "ACCESS_DENIED", "Acesso negado.", ex, request, false);
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<ApiError> handleResponseStatus(ResponseStatusException ex, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.resolve(ex.getStatusCode().value());
+        if (status == null || status.is5xxServerError()) {
+            return error(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_ERROR",
+                    "Nao foi possivel concluir a operacao.", ex, request, true);
+        }
+        return error(status, status == HttpStatus.NOT_FOUND ? "NOT_FOUND" : "REQUEST_REJECTED",
+                status == HttpStatus.NOT_FOUND ? "Recurso nao encontrado." : "A requisicao foi rejeitada.",
+                ex, request, false);
     }
 
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)

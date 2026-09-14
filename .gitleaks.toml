@@ -1,0 +1,27 @@
+title = "Escala secret detection (issue 99)"
+
+[extend]
+useDefault = true
+
+# Only explicit non-production placeholders; no directory or history exclusions.
+[allowlist]
+description = "Documented CI and environment-template placeholders"
+regexTarget = "secret"
+regexes = [
+  '''^ci-only-[a-z0-9-]+$''',
+  '''^replace-with-[a-z0-9-]+$''',
+  '''^change-me(?:-[a-z0-9-]+)?$''',
+]
+# Historical exceptions live in .gitleaksignore as exact commit:file:rule:line
+# fingerprints. Never exclude an entire commit, path, or secret value.
+
+[[rules]]
+id = "escala-secret-assignment"
+description = "Quoted application secret literal"
+regex = '''(?i)(?:NEXTAUTH_SECRET|AUTH_SECRET|JWT_SECRET|ADMIN_JWT_SECRET|INTERNAL_BFF_SHARED_SECRET|API_TOKEN_SALT|TRANSFER_TOKEN_SALT|ENCRYPTION_KEY)["']?\s*[:=]\s*["']([a-z0-9_.,/+=-]{12,})["']'''
+secretGroup = 1
+
+[[rules]]
+id = "escala-private-key-header"
+description = "Private-key material, including truncated PEM files"
+regex = '''-----BEGIN(?: [A-Z0-9]+)* PRIVATE KEY-----'''

@@ -2,6 +2,37 @@
 
 Data de referencia: 2026-09-07.
 
+## Governanca de release (estado 2026-09-13)
+
+O estado operacional deve ser lido separando `Done`, `implementado em develop`,
+`promovido para main` e `liberado`. O gate atual de producao permanece bloqueado
+pela #99 e pelo PR #102 até todos os checks obrigatorios passarem.
+
+### R0 — Security & Release Gate
+
+- #99-A/#103 e #99-B/#104 (P0), seguidos por #99-C/#105 a #99-G/#109 (P1).
+- Verificar #52 (backup/restore), #53 (Stripe/webhook) e #54 (limites concorrentes).
+- Exigir testes negativos, CI completo, Docker/health/OpenAPI, SCA sem High/Critical
+  nao aceitos, secret scan historico e novo Codex Security sem High/Critical.
+- Somente depois promover `develop` para `main`.
+
+### R1 — AppSec Hardening
+
+Scanning continuo, supply chain, isolamento de CI para PR nao confiavel e hardening
+de endpoints publicos/uploads/Strapi Admin.
+
+### R2 — Production Readiness
+
+Observabilidade, correlation ID, logs estruturados com masking, readiness/alertas,
+LGPD/retention/audit e runbooks operacionais.
+
+### R3 — Architecture Quality
+
+Convergencia incremental para monolito modular/hexagonal, testes arquiteturais,
+Flyway como source of truth, contratos OpenAPI e reducao gradual de dependencias
+legadas. Kafka, brokers, microservices, RLS e multi-region permanecem condicionados
+a triggers concretos e nao sao compromisso desta release.
+
 ## Estrategia de entrega
 
 O roadmap prioriza uma entrada de Oceano Azul: PMEs que ainda operam com Excel, WhatsApp, lousa ou papel. A primeira versao vendavel deve resolver escala mensal com templates, feriados, contadores, alertas e publicacao auditavel. Recursos como ponto completo, banco de horas avancado, dimensionamento e IA entram por fases, para evitar competir cedo demais com suites maduras de ponto/RH.
