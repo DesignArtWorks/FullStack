@@ -5,6 +5,17 @@ set -eu
 work=$(mktemp -d)
 trap 'rm -r "$work"' EXIT
 config=/repo/.gitleaks.toml
+# Only commit-bound fingerprints may exempt reviewed historical occurrences.
+# Reject broad exclusions even if the synthetic controls below still pass.
+if grep -Eq '^[[:space:]]*(commits|paths|stopwords|fingerprints)[[:space:]]*=' "$config"; then
+  printf 'Broad or unsupported secret-scanner exclusions are forbidden\n'
+  exit 1
+fi
+if tr -d '\r' < /repo/.gitleaksignore | grep -Ev '^[[:space:]]*(#.*)?$' |
+  grep -Ev '^[a-f0-9]{40}:[^:]+:[^:]+:[1-9][0-9]*$'; then
+  printf 'Historical exceptions must be commit:path:rule:line fingerprints\n'
+  exit 1
+fi
 blocked() {
   name=$1
   value=$2
@@ -42,3 +53,45 @@ result=$?
 set -e
 test "$result" -eq 1
 printf 'Detected removed historical fixture; placeholder accepted\n'
+
+# Exempting one occurrence must not exempt its siblings or future copies.
+printf 'token=ghp_%s\ntoken=ghp_%s\n' "$suffix" "$suffix" > "$work/pair.txt"
+git -C "$work" add pair.txt
+git -C "$work" commit -qm 'Two synthetic findings in one commit'
+pair_commit=$(git -C "$work" rev-parse HEAD)
+git -C "$work" rm -q pair.txt
+git -C "$work" commit -qm 'Remove paired findings'
+first_commit=$(git -C "$work" rev-list --max-parents=0 HEAD)
+printf '%s:fixture.txt:github-pat:1\n%s:pair.txt:github-pat:1\n' \
+  "$first_commit" "$pair_commit" > "$work/.gitleaksignore"
+
+scan_fixture() {
+  expected_exit=$1
+  expected_count=$2
+  set +e
+  gitleaks git "$work" --log-opts=--all --config "$config" \
+    --gitleaks-ignore-path "$work/.gitleaksignore" --redact=100 \
+    --no-banner --log-level error --report-format json --report-path "$work/result.json"
+  result=$?
+  set -e
+  test "$result" -eq "$expected_exit"
+  count=$(grep -c '"Fingerprint":' "$work/result.json" || true)
+  test "$count" -eq "$expected_count"
+}
+scan_fixture 1 1
+grep -Fq "\"Fingerprint\": \"${pair_commit}:pair.txt:github-pat:2\"" "$work/result.json"
+printf 'Same-commit sibling remains detected\n'
+
+printf '%s:pair.txt:github-pat:2\n' "$pair_commit" >> "$work/.gitleaksignore"
+scan_fixture 0 0
+printf 'Exact reviewed historical occurrences accepted\n'
+
+printf 'token=ghp_%s\n' "$suffix" > "$work/pair.txt"
+printf 'token=ghp_%s\n' "$suffix" > "$work/new-file.txt"
+git -C "$work" add pair.txt new-file.txt
+git -C "$work" commit -qm 'Reintroduce synthetic values in a new commit'
+new_commit=$(git -C "$work" rev-parse HEAD)
+scan_fixture 1 2
+grep -Fq "\"Fingerprint\": \"${new_commit}:pair.txt:github-pat:1\"" "$work/result.json"
+grep -Fq "\"Fingerprint\": \"${new_commit}:new-file.txt:github-pat:1\"" "$work/result.json"
+printf 'New commit and new file remain detected\n'

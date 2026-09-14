@@ -35,7 +35,7 @@ jobs:
         run: |
           image=zricethezav/gitleaks:v8.24.2@sha256:b5918eb91b8d2473cec722f066abb4352e4ffdc4ec9f4283ec143aba9ec9ebc4
           docker run --rm -v "$PWD:/repo:ro" --entrypoint sh "$image" /repo/scripts/security/test-secret-scanner.sh
-          docker run --rm -v "$PWD:/repo:ro" "$image" git --config /repo/.gitleaks.toml --log-opts=--all --redact=100 --no-banner /repo
+          docker run --rm -v "$PWD:/repo:ro" "$image" git --config /repo/.gitleaks.toml --gitleaks-ignore-path /repo/.gitleaksignore --log-opts=--all --redact=100 --no-banner /repo
 
       - name: Reject hardcoded credentials in tracked files
         shell: pwsh
