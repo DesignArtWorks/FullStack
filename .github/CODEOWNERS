@@ -1,0 +1,5 @@
+# Security controls and allowlists require the project maintainer's review.
+/.github/ @wemersonnino
+/scripts/security/ @wemersonnino
+/.gitleaks* @wemersonnino
+/docs/appsec* @wemersonnino

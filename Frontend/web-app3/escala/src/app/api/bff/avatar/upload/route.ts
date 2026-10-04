@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getOptionalServerSession } from '@/lib/auth/server-auth';
+import { resolveAvatarPrincipal } from '@/lib/avatar/principal';
 import {
   buildPrivateAvatarUrl,
   detectAvatarFormat,
@@ -13,10 +13,8 @@ export const runtime = 'nodejs';
 const MAX_AVATAR_SIZE = 2 * 1024 * 1024;
 
 export async function POST(request: Request) {
-  const session = await getOptionalServerSession();
-  if (!session?.user?.id) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-  }
+  const owner = await resolveAvatarPrincipal(request);
+  if (owner instanceof NextResponse) return owner;
 
   const formData = await request.formData();
   const file = formData.get('file');
@@ -51,10 +49,10 @@ export async function POST(request: Request) {
   }
 
   const fileName = await replaceUserAvatarFile(
-    session.user.id,
+    owner,
     sanitizedAvatar.bytes,
     sanitizedAvatar.format,
   );
 
-  return NextResponse.json({ url: buildPrivateAvatarUrl(fileName) });
+  return NextResponse.json({ url: buildPrivateAvatarUrl(fileName) }, { headers: { 'Cache-Control': 'no-store' } });
 }

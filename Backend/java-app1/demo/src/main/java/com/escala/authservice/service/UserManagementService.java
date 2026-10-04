@@ -49,6 +49,19 @@ public class UserManagementService {
         return currentUserService.requireCurrentUser(email);
     }
 
+    @Transactional(readOnly = true)
+    public com.escala.authservice.dto.AvatarAccessResponse avatarAccess(String currentEmail, UUID ownerId) {
+        User actor = currentUser(currentEmail);
+        if (!actor.isActive() || actor.getCompany() == null || !actor.getCompany().isActive()) {
+            throw new org.springframework.security.access.AccessDeniedException("Operacao nao autorizada para este recurso");
+        }
+        // No global-admin exception: private avatars are confined to their company.
+        User owner = userRepository.findByIdAndCompanyId(ownerId, actor.getCompany().getId())
+                .filter(User::isActive)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Avatar not found"));
+        return new com.escala.authservice.dto.AvatarAccessResponse(owner.getId(), owner.getCompany().getId());
+    }
+
     public User updateCurrentUser(String currentEmail, UpdateCurrentUserRequest request) {
         User user = currentUser(currentEmail);
 
@@ -77,7 +90,7 @@ public class UserManagementService {
             String avatarUrl = request.getAvatarUrl().trim();
             if (avatarUrl.isBlank()) {
                 user.setAvatarUrl(null);
-            } else if (!isAllowedAvatarUrl(avatarUrl)) {
+            } else if (!isAllowedAvatarUrl(user, avatarUrl)) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Avatar URL is not allowed");
             } else {
                 user.setAvatarUrl(avatarUrl);
@@ -200,9 +213,12 @@ public class UserManagementService {
         return normalized;
     }
 
-    private boolean isAllowedAvatarUrl(String avatarUrl) {
+    private boolean isAllowedAvatarUrl(User user, String avatarUrl) {
         if (avatarUrl.startsWith("/api/bff/avatar/files/")) {
-            return true;
+            if (user.getCompany() == null || user.getId() == null) return false;
+            String prefix = "/api/bff/avatar/files/" + user.getCompany().getId() + "-" + user.getId() + "-";
+            return avatarUrl.startsWith(prefix) && avatarUrl.substring(prefix.length()).matches(
+                    "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\\.(jpg|png|webp)");
         }
 
         try {

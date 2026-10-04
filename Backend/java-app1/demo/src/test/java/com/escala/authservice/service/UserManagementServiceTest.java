@@ -114,7 +114,8 @@ class UserManagementServiceTest {
         UpdateCurrentUserRequest request = new UpdateCurrentUserRequest();
         request.setUsername("admin");
         request.setEmail("admin@example.com");
-        request.setAvatarUrl("/api/bff/avatar/files/abc-123.webp");
+        String avatarUrl = "/api/bff/avatar/files/" + company.getId() + "-" + user.getId() + "-" + UUID.randomUUID() + ".webp";
+        request.setAvatarUrl(avatarUrl);
 
         when(currentUserService.requireCurrentUser("admin@example.com")).thenReturn(user);
         when(userRepository.existsByCompanyIdAndUsernameIgnoreCaseAndIdNot(company.getId(), "admin", user.getId())).thenReturn(false);
@@ -124,7 +125,7 @@ class UserManagementServiceTest {
         User result = userManagementService.updateCurrentUser("admin@example.com", request);
 
         assertSame(user, result);
-        assertEquals("/api/bff/avatar/files/abc-123.webp", user.getAvatarUrl());
+        assertEquals(avatarUrl, user.getAvatarUrl());
         verify(userRepository).save(user);
     }
 
@@ -141,5 +142,25 @@ class UserManagementServiceTest {
                 () -> userManagementService.updateTheme("admin@example.com", foreignUserId, "dark"));
 
         verify(userRepository).findByIdAndCompanyId(foreignUserId, company.getId());
+    }
+
+    @Test
+    void updateCurrentUserCannotClaimForeignOrLegacyAvatar() {
+        Company company = Company.builder().id(UUID.randomUUID()).build();
+        User user = User.builder().id(UUID.randomUUID()).email("alice@example.test").username("alice").company(company).build();
+        when(currentUserService.requireCurrentUser(user.getEmail())).thenReturn(user);
+        String base = "/api/bff/avatar/files/";
+        for (String invalid : List.of(
+                base + UUID.randomUUID() + "-" + user.getId() + "-" + UUID.randomUUID() + ".webp",
+                base + company.getId() + "-" + UUID.randomUUID() + "-" + UUID.randomUUID() + ".webp",
+                base + user.getId() + "-" + UUID.randomUUID() + ".webp",
+                base + company.getId() + "-" + user.getId() + "-../foreign.webp")) {
+            UpdateCurrentUserRequest request = new UpdateCurrentUserRequest();
+            request.setEmail(user.getEmail());
+            request.setUsername(user.getUsername());
+            request.setAvatarUrl(invalid);
+            assertThrows(ResponseStatusException.class, () -> userManagementService.updateCurrentUser(user.getEmail(), request));
+        }
+        org.mockito.Mockito.verify(userRepository, org.mockito.Mockito.never()).save(user);
     }
 }
