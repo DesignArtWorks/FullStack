@@ -163,7 +163,7 @@ jobs:
           -e APP_KEYS -e API_TOKEN_SALT -e ADMIN_JWT_SECRET
           -e TRANSFER_TOKEN_SALT -e ENCRYPTION_KEY -e STRAPI_CRON_ENABLED
           -v "$PWD:/workspace" -w /workspace node:22-bookworm-slim
-          sh -c "npm ci && npm run build"
+          sh -c "npm ci && npm run test:security && npm run build"
 
   dependency-scan:
     name: Security / Dependency SCA
