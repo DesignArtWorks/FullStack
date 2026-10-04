@@ -65,17 +65,20 @@ jobs:
           git fetch --depth=1 origin "$GITHUB_SHA"
           git checkout --detach FETCH_HEAD
 
+      - name: Select preinstalled Java 25
+        shell: bash
+        run: |
+          test -x "$JAVA_HOME_25_X64/bin/java"
+          echo "JAVA_HOME=$JAVA_HOME_25_X64" >> "$GITHUB_ENV"
+          echo "$JAVA_HOME_25_X64/bin" >> "$GITHUB_PATH"
+          "$JAVA_HOME_25_X64/bin/java" -version
+
       - name: Require Docker for Testcontainers
         run: docker info
 
       - name: Run integration tests with PostgreSQL, Redis and Flyway
         working-directory: Backend/java-app1/demo
-        run: >-
-          docker run --rm --network host
-          -v /var/run/docker.sock:/var/run/docker.sock
-          -v "$PWD:/workspace" -w /workspace
-          maven:3.9-eclipse-temurin-25
-          mvn -B -Pintegration test
+        run: ./mvnw -B -Dapi.version=1.44 -Pintegration test
 
       - name: Reject skipped, empty or missing integration tests
         shell: bash
