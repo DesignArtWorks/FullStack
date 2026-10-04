@@ -36,6 +36,13 @@ public class UserManagementController {
         return ResponseEntity.ok(UserResponse.from(userManagementService.currentUser(authentication.getName())));
     }
 
+    @GetMapping("/{id}/avatar-access")
+    public ResponseEntity<com.escala.authservice.dto.AvatarAccessResponse> avatarAccess(
+            Authentication authentication, @PathVariable UUID id) {
+        return ResponseEntity.ok().cacheControl(org.springframework.http.CacheControl.noStore())
+                .body(userManagementService.avatarAccess(authentication.getName(), id));
+    }
+
     @PatchMapping("/me")
     public ResponseEntity<UserResponse> updateMe(
             Authentication authentication,

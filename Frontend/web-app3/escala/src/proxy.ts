@@ -48,6 +48,15 @@ function clearExpiredSession(response: NextResponse) {
 }
 
 export async function proxy(req: NextRequest) {
+  // Legacy public avatars have no trustworthy ownership metadata. Fail closed;
+  // owners re-upload through the private BFF. Image optimization is disabled in
+  // next.config.ts; also reject this alternate route to private local files.
+  let decodedPath: string;
+  try { decodedPath = decodeURIComponent(req.nextUrl.pathname); }
+  catch { return new NextResponse(null, { status: 400 }); }
+  if (/^\/uploads\/avatars(?:\/|$)/i.test(decodedPath) || decodedPath === '/_next/image') {
+    return new NextResponse(null, { status: 404, headers: { 'Cache-Control': 'no-store' } });
+  }
   const pathnameWithoutLocale = stripLocale(req.nextUrl.pathname);
   const isPrivateRoute = PRIVATE_ROUTES.some(
     (path) => pathnameWithoutLocale === path || pathnameWithoutLocale.startsWith(`${path}/`)
@@ -119,6 +128,8 @@ export default proxy;
 
 export const config = {
   matcher: [
+    '/uploads/:path*',
+    '/_next/image',
     '/((?!api|trpc|_next|_vercel|.*\\..*).*)',
     '/([\\w-]+)?/users/(.+)',
   ],

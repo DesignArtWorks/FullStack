@@ -163,7 +163,72 @@ jobs:
           -e APP_KEYS -e API_TOKEN_SALT -e ADMIN_JWT_SECRET
           -e TRANSFER_TOKEN_SALT -e ENCRYPTION_KEY -e STRAPI_CRON_ENABLED
           -v "$PWD:/workspace" -w /workspace node:22-bookworm-slim
-          sh -c "npm ci && npm run build"
+          sh -c "npm ci && npm run test:security && npm run build"
+
+  dependency-scan:
+    name: Security / Dependency SCA
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Checkout repository
+        run: |
+          git init .
+          git remote add origin "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git"
+          git fetch --depth=1 origin "$GITHUB_SHA"
+          git checkout --detach FETCH_HEAD
+
+      - name: Resolve Maven dependency graph into CycloneDX
+        working-directory: Backend/java-app1/demo
+        run: |
+          mkdir -p sca-output
+          chmod -R a+rwx sca-output
+          docker run --rm --cap-drop ALL --security-opt no-new-privileges \
+            -v "$PWD:/workspace" -w /workspace maven:3.9-eclipse-temurin-25 \
+            sh -c 'mvn -B --no-transfer-progress org.cyclonedx:cyclonedx-maven-plugin:2.9.1:makeAggregateBom -DoutputFormat=json -DincludeTestScope=true -DoutputDirectory=/tmp/sca-output && cp /tmp/sca-output/bom.json /workspace/sca-output/bom.json'
+
+      - name: Block unaccepted High and Critical vulnerabilities
+        run: |
+          set -euo pipefail
+          image=aquasec/trivy:0.74.0@sha256:62b1e65e8869bc4b4c6aa4fa2b21595256c7c2f6018a9d9ad61caf87187c1969
+          # Maven has no accepted exceptions. JavaScript uses the versioned,
+          # path/package-scoped and expiring risk acceptance in .trivyignore.yaml.
+          docker run --rm -v "$PWD:/repo:ro" "$image" sbom \
+            --severity HIGH,CRITICAL --exit-code 1 --ignorefile /dev/null \
+            /repo/Backend/java-app1/demo/sca-output/bom.json
+          docker run --rm -v "$PWD:/repo:ro" --entrypoint sh "$image" -c '
+            set -eu
+            for target in Backend/cms-strapi Frontend/web-app3/escala; do
+              trivy fs --scanners vuln --offline-scan \
+                --severity HIGH,CRITICAL --exit-code 1 \
+                --ignorefile /repo/.trivyignore.yaml --show-suppressed \
+                --include-dev-deps --skip-dirs "**/node_modules" "/repo/$target"
+            done
+          '
+
+  frontend-security-e2e:
+    name: Frontend / Security E2E
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        run: |
+          git init .
+          git remote add origin "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git"
+          git fetch --depth=1 origin "$GITHUB_SHA"
+          git checkout --detach FETCH_HEAD
+
+      - name: Require Docker
+        run: docker info
+
+      - name: Run Auth/BFF/Tenant security suite
+        working-directory: Frontend/web-app3/escala
+        run: >-
+          docker run --rm
+          -e CI=true
+          -v "$PWD:/workspace" -w /workspace
+          mcr.microsoft.com/playwright:v1.63.0-noble
+          bash -lc "corepack enable && corepack prepare pnpm@10.33.3 --activate &&
+          pnpm install --frozen-lockfile && pnpm run test:e2e:ci"
 
   required-gate:
     name: CI / Required Gate
@@ -174,6 +239,8 @@ jobs:
       - backend-integration
       - frontend
       - cms
+      - frontend-security-e2e
+      - dependency-scan
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
@@ -186,6 +253,8 @@ jobs:
             "${{ needs.backend-integration.result }}"
             "${{ needs.frontend.result }}"
             "${{ needs.cms.result }}"
+            "${{ needs.frontend-security-e2e.result }}"
+            "${{ needs.dependency-scan.result }}"
           )
           printf 'Required job result: %s\n' "${results[@]}"
           for result in "${results[@]}"; do
