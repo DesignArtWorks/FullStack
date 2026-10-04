@@ -25,6 +25,10 @@ escopo SCA desta entrega. A exclusao e explicita no workflow; nao altera a pasta
   considerando tambem o requisito de `preferred-pm`/`which-pm` no lock.
 - Frontend principal: Next.js 16.3.8, NextAuth 4.24.15, Axios 1.20.0,
   Sharp 0.35.5 e Playwright 1.63.0. A imagem de E2E acompanha o Playwright.
+- Backend: mantidas as linhas gerenciadas pelo Spring Boot 4.1.0, com patches
+  de seguranca Jackson 2.21.7/3.1.7, Netty 4.2.17.Final, PostgreSQL JDBC
+  42.7.12 e Tomcat 11.0.25. Isso corrige os findings High/Critical publicados
+  depois do scan verde de 2026-09-14 sem trocar majors ou contratos da aplicacao.
 - Overrides selecionam as correcoes transitivas ainda nao resolvidas pelos pais.
   Os novos overrides por major preservam as linhas de APIs de pacotes como
   `brace-expansion`, `minimatch`, `form-data`, `js-yaml` e `protobufjs`.
@@ -84,6 +88,9 @@ nao uma garantia de ausencia de falhas no codigo ou em imagens Docker.
 Em 2026-10-03, a base atual voltou a reportar High por causa do advisory de
 `braces` sem patch. O resultado deve continuar mostrando o finding como
 suprimido, permitindo o gate apenas enquanto a excecao estiver valida.
+Em 2026-10-04, o SBOM Java foi refeito com os patches acima e passou no Trivy
+0.74.0 com zero findings High/Critical corrigiveis; a suite Maven passou com
+122 testes.
 
 Validacoes aplicaveis: instalacao limpa, lint/typecheck/build do frontend
 principal, suite E2E Auth/BFF/tenant, testes e build do Strapi, startup com
