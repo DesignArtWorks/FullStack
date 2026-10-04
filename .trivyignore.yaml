@@ -1,0 +1,12 @@
+vulnerabilities:
+  - id: CVE-2026-93687
+    paths:
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+    purls:
+      - "pkg:npm/braces@3.0.3"
+    expired_at: 2026-11-03
+    statement: >-
+      Temporary risk acceptance for issue #108. braces 3.0.3 is transitive
+      through supported Strapi/Next.js tooling and had no fixed upstream release
+      on 2026-10-03. Review on upstream release or before expiration.
