@@ -1,5 +1,17 @@
 # Codex Project Context
 
+## Materiais de trabalho com IA
+
+- Entrada concisa e fontes por atividade: [docs/ai/indice.md](docs/ai/indice.md).
+- Contexto: [docs/ai/contexto-escala.md](docs/ai/contexto-escala.md).
+- Prompts reutilizáveis: [docs/ai/prompts-escala.md](docs/ai/prompts-escala.md).
+- Handoff de UX/UI: [docs/ai/designer-escala.md](docs/ai/designer-escala.md).
+- Skills locais versionadas em `.agents/skills/escala-*/SKILL.md`; selecionar pelo
+  trabalho solicitado, sem carregar todas por padrão nem ampliar autorização.
+- Manifests e lockfiles determinam versões atuais; números históricos abaixo
+  precisam ser reconciliados antes de decisões de upgrade ou implementação.
+
+
 ## Decisoes oficiais
 
 - O frontend principal do produto e `Frontend/web-app3/escala`.
