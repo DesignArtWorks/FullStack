@@ -102,6 +102,7 @@
   },
   "pnpm": {
     "overrides": {
+      "source-map-js": "1.2.2",
       "flatted": ">=3.4.2",
       "jws": ">=3.2.3",
       "minimatch": ">=3.1.4",
