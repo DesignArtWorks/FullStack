@@ -16,3 +16,5 @@ Priorize jornada de escala mensal, cobertura/conflitos e ação seguinte. Reutil
 Inclua estados loading/vazio/erro/sucesso/sem acesso, teclado/foco, responsividade e dados fictícios coerentes. Diferencie consentimento comercial e aceite de termos. CMS fornece conteúdo; backend define regra/tenant/autorização.
 
 Entregue handoff verificável conforme guia de designer, com evidências e pendências. Só implemente se fizer parte do pedido; proposta visual não é aprovação de produto.
+
+O design local está incompleto: inventarie telas ausentes/parciais, correções de layout e implementação pendente, reconciliando #95/#98. Se a tarefa incluir execução, crie/corrija as telas por jornada e valide interação, acessibilidade e responsividade; não entregue somente handoff quando implementação já estiver autorizada.

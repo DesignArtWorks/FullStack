@@ -20,6 +20,10 @@ Promessa inicial: sair da planilha e montar escala mensal com templates, feriado
 
 Versões são confirmadas em manifests, lockfiles e build, não neste resumo. Em origin/develop 2c77a55, package.json registra Next.js 16.3.8; os números históricos do AGENTS não devem substituir o manifest.
 
+Design está em andamento: Wemerson confirmou em 06/10/2026 implementações,
+criação de telas e correções de layout ainda pendentes. Inventariar lacunas
+antes de executar; não presumir conclusão ou aprovação visual.
+
 ## Consultar conforme a tarefa
 
 | Trabalho | Fonte |
