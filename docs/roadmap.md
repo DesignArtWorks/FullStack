@@ -1,5 +1,10 @@
 # Roadmap — Gestao Inteligente de Escalas
 
+Plano operacional da equipe Wemerson + Codex, marcos de entrega AWS, marketing,
+KPIs e organização do Slack: [Gestão, AWS e marketing](plano-gestao-entrega-aws-marketing.md)
+(referência 06/10/2026, issue #114). Consultar o snapshot antes de assumir que
+checklists históricos representam o estado atual das issues ou da produção.
+
 Data de referencia: 2026-09-07.
 
 ## Governanca de release (estado 2026-09-13)
