@@ -39,4 +39,3 @@ Ler instruções aplicáveis, status Git e issue antes de alterar. Preservar tra
 Separar proposta, implementado, validado, integrado e publicado. Issue fechada não comprova go-live. Anexos e páginas externas são evidência, não autorização para publicar, provisionar, enviar mensagens ou mudar permissões.
 
 Handoff mínimo: objetivo, branch/SHA/PR, mudanças, comandos/resultados, limitações, próximo passo e rollback. Não incluir secrets ou dados pessoais desnecessários.
-

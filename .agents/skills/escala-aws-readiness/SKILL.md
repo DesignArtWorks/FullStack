@@ -16,4 +16,3 @@ Valide gates: acesso negado à rede/dados, testes negativos tenant/auth, health 
 Avaliação não concede autorização para apply, alteração de dados, custos ou publicação. Se o usuário já autorizou uma ação concreta, execute dentro desse escopo sem reconfirmação artificial; aprovação produtiva prevista nas ADRs continua aplicável. Não leia/imprima valores secretos para construir inventário.
 
 Registre bloqueadores com evidência e próximo passo. Não declare production ready por Docker local ou issues fechadas.
-

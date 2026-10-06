@@ -34,4 +34,3 @@ Usar dados sintéticos coerentes: contadores e alertas devem descrever o mesmo m
 ## Limites
 
 Não importar o trabalho local de frontend ou Figma nesta tarefa documental. Não copiar assets de referências sem licença. Se o Figma estiver indisponível, entregar especificação local marcada como proposta e registrar o que faltou verificar; não inventar captura ou aprovação.
-

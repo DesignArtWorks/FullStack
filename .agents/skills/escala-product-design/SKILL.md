@@ -16,4 +16,3 @@ Priorize jornada de escala mensal, cobertura/conflitos e ação seguinte. Reutil
 Inclua estados loading/vazio/erro/sucesso/sem acesso, teclado/foco, responsividade e dados fictícios coerentes. Diferencie consentimento comercial e aceite de termos. CMS fornece conteúdo; backend define regra/tenant/autorização.
 
 Entregue handoff verificável conforme guia de designer, com evidências e pendências. Só implemente se fizer parte do pedido; proposta visual não é aprovação de produto.
-
