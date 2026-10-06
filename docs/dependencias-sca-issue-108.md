@@ -130,3 +130,14 @@ registro de estratégia. Não há alteração REST, tenant ou regra de negócio.
 Rollback técnico: reverter a propriedade e usar o digest anterior, sem migration
 de banco. Isso reintroduz a dependência afetada e bloqueia release até tratamento
 de risco; não é uma alternativa produtiva aprovada.
+
+No primeiro CI desta correção, o SBOM Java passou com zero High/Critical.
+O scan então avançou para JavaScript e detectou CVE-2026-93749 HIGH em
+source-map-js 1.2.1. O pacote estava nos locks do CMS e frontend, via PostCSS
+e tooling de CSS. A atualização complementar fixa o override transitivo em
+1.2.2 nos dois manifests e regenera seus locks, sem dependência direta nova.
+O [advisory revisado](https://github.com/advisories/GHSA-68fv-2mgg-jv7q)
+indica esse patch para negação de serviço com offsets inválidos em source maps
+indexados. Não foi encontrado consumo direto desse pacote no código da
+aplicação. Builds e checks de frontend/CMS validam os consumidores existentes;
+o SCA completo continua sendo condição de integração, sem nova exceção.
