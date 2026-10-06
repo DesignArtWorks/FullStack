@@ -106,3 +106,27 @@ descartavel e nao comprova rollback de dados de producao.
 Referencias: [politica AppSec](appsec-criterios-de-aceite.md),
 [GitHub supply chain security](https://docs.github.com/en/code-security/concepts/supply-chain-security/supply-chain-security),
 [leitura de hashes do Trivy 0.74.0](https://github.com/aquasecurity/trivy/blob/v0.74.0/pkg/sbom/cyclonedx/unmarshal.go).
+
+## Atualização da linha Spring Framework — issue #118
+
+Em 06/10/2026, o CI de #117 detectou CVE-2026-47884 em spring-webmvc 7.0.8.
+A remediation #108 já estava em develop, mas não atualizava Spring Framework.
+O POM passa a definir spring-framework.version=7.0.9, alinhando todos os
+módulos pelo BOM gerenciado sem mudar Spring Boot 4.1.0 ou Java 25.
+
+O [advisory oficial](https://spring.io/security/cve-2026-47884/) confirma o
+patch OSS 7.0.9 e condiciona exploração a XsltView com mapping /** e resolução
+implícita de view. Nenhum uso dessa configuração foi encontrado no código
+inspecionado; isso não equivale a comprovação de ausência em todo runtime.
+O scanner classifica o finding como Critical, enquanto Spring o classifica
+como Medium. O gate do projeto continua obrigatório e não recebe supressão.
+
+A evidência de saída exige dependency tree/SBOM sem módulos Framework 7.0.8,
+SCA sem High/Critical não aceitos, testes/build, integração e Docker com
+health/Swagger/OpenAPI. Consultar os checks do PR relacionado à issue #118
+para os resultados efetivamente executados; não presumir aprovação por este
+registro de estratégia. Não há alteração REST, tenant ou regra de negócio.
+
+Rollback técnico: reverter a propriedade e usar o digest anterior, sem migration
+de banco. Isso reintroduz a dependência afetada e bloqueia release até tratamento
+de risco; não é uma alternativa produtiva aprovada.
