@@ -16,6 +16,8 @@
 	<properties>
 		<java.version>25</java.version>
 		<!-- Security patch levels compatible with the Spring Boot 4.1 managed dependency lines. -->
+		<!-- CVE-2026-47884: align every Spring Framework module to the fixed BOM. -->
+		<spring-framework.version>7.0.9</spring-framework.version>
 		<jackson-2-bom.version>2.21.7</jackson-2-bom.version>
 		<jackson-bom.version>3.1.7</jackson-bom.version>
 		<netty.version>4.2.17.Final</netty.version>
