@@ -16,4 +16,3 @@ Para formulários, Strapi é editorial e Spring/BFF persiste lead, consentimento
 Experimento deve indicar público, janela, orçamento aprovado e decisão; métrica inclui fonte, numerador, denominador e exclusões. Não confunda visita, lead, trial, ativação e pagamento.
 
 Entregue rascunho revisável. Publicar campanha, enviar mensagens ou gastar exige autorização correspondente ao destino/escopo; o pedido de preparar material não a concede. Reutilize canais Slack existentes quando envio estiver autorizado; GitHub/docs continuam fontes oficiais.
-

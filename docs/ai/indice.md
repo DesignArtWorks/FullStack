@@ -23,4 +23,3 @@ A equipe continua Wemerson + Codex. Os papéis das skills não criam colaborador
 Atualizar material quando decisão, contrato ou evidência muda. Estado transitório pertence à issue/PR/handoff, com data e SHA. Revisar referências após renomear arquivos; validar SKILL.md com o quick_validate da skill-creator disponível no ambiente. A validação estrutural não prova qualidade do comportamento.
 
 Rollback: revert do commit documental. Merge via PR em develop; promoção de main depende dos gates de release e não faz parte desta solicitação.
-

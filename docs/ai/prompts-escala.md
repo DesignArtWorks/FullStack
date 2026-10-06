@@ -29,4 +29,3 @@ Revise [diff/PR] contra critérios da issue e AppSec. Priorize regressão, autor
 ## Comunicação no Slack
 
 Quando eu autorizar o envio, confira as issues e PRs em [escopo/período], leia o canal existente e publique em [canal]. Inclua mudança, evidência, status de integração/produção, riscos e próximos passos. Não use atualização como data de fechamento nem repita anúncio idêntico.
-
