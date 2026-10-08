@@ -1,5 +1,15 @@
 # Codex Project Context
 
+## Governança por especificação
+
+- Ler `.specify/memory/constitution.md` antes de planejar ou implementar; implementações comuns não podem alterar seus princípios.
+- Manter `specs/<numero>-<slug>/spec.md`, `plan.md` e `tasks.md` por issue relevante, usando `.specify/templates/` e `docs/desenvolvimento-orientado-especificacao.md`.
+- Incluir Constitution Check CON-01 a CON-09 antes das tarefas e novamente antes do PR, com evidências e justificativa para pendências/N/A.
+- Preservar IDs/origens na cadeia requisito → tarefa → teste/verificação → código/artefato → commit → PR; registrar resultados e SHAs reais.
+- Distinguir tarefas produzidas, validação, PR aberto, merge develop e promoção main. Manter o fluxo obrigatório de issues deste arquivo.
+- Registrar divergências e dívida legada no plano, sem reverter patches para seguir versões históricas nem afirmar migração hexagonal concluída.
+- Esta estrutura documental não instala CLI/skills do Spec Kit nem cria imposição automática no Git/CI.
+
 ## Materiais de trabalho com IA
 
 - Entrada concisa e fontes por atividade: [docs/ai/indice.md](docs/ai/indice.md).
