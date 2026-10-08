@@ -52,3 +52,21 @@ Incluir negativos/cross-tenant para recursos tenant-bound e testes reais para ba
 | <ID> | <IDs> | <TIDs> | <caminho/símbolo> | <caminho/símbolo> |
 
 <Commits coesos, issue/spec/IDs no corpo; ledger com SHAs reais. Branch → PR develop → promoção develop/main sob proteção. Checks/revisões/rollback e pendências antes de encerrar issue.>
+
+## Constitution Check final — antes do PR
+
+Head revisado / data: <SHA real / data>; responsável: <nome>. Preencher novamente com evidência do resultado, sem copiar automaticamente o check de desenho.
+
+| Princípio | Evidência do diff / validação | Resultado | Pendência / responsável |
+| --- | --- | --- | --- |
+| CON-01 | <fronteiras preservadas> | PENDING | <ação> |
+| CON-02 | <dependências e limites efetivos> | PENDING | <ação> |
+| CON-03 | <autorização/tenant e negativos> | PENDING | <ação> |
+| CON-04 | <invariantes/transições testadas> | PENDING | <ação> |
+| CON-05 | <dados/auditoria/migrations> | PENDING | <ação> |
+| CON-06 | <contratos/comunicações/OpenAPI> | PENDING | <ação> |
+| CON-07 | <UX/acessibilidade/claims> | PENDING | <ação> |
+| CON-08 | <matriz, testes/verificações e gates> | PENDING | <ação> |
+| CON-09 | <base, commits/push, escopo e controles PR> | PENDING | <ação> |
+
+N/A exige motivo explícito por princípio. Separar revisão local, CI e merge; pendência externa não pode virar PASS por ausência de execução.
