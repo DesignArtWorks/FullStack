@@ -12,7 +12,7 @@ Os containers recebem o repositório somente para leitura, sem rede, sem capabil
 
 ## Exceções revisadas
 
-A `.gitleaksignore` conserva apenas duas ocorrências sintéticas antigas: o controle Slack do harness e o valor `ci-only` de Playwright. As 18 exceções históricas anteriores para valores locais foram retiradas conforme a entrevista. Ser desenvolvimento ou teste não justifica ignorar credencial real. Somente placeholder ilustrativo, fixture sem acesso ou falso positivo comprovado pode ser revisado como exceção.
+A `.gitleaksignore` conserva o controle Slack do harness e o valor `ci-only` de Playwright. A remediação propõe uma terceira ocorrência exata: a chave JWT determinística de 41 bytes do perfil de integração, cujo conteúdo é uma frase dedicada a testes, sem reutilização nos `.env` locais verificados. Sua classificação está sujeita à revisão humana antes de publicação. As exceções locais reais anteriores foram retiradas. Ser desenvolvimento ou teste não justifica ignorar credencial real. Somente placeholder ilustrativo, fixture sem acesso ou falso positivo comprovado pode ser revisado como exceção.
 
 Cada fingerprint inclui SHA, arquivo, regra e linha. Não usar exclusão de diretório/commit nem ampliar padrões para obter CI verde. Nova classificação exige fonte e revisão humana. A remoção das exceções não retira os valores do histórico nem prova revogação.
 
@@ -40,3 +40,9 @@ Entrevista, H1/H2 e classificação semântica dependem de Wemerson; CI verifica
 Rollback: corrigir/reverter a mudança por PR com os controles vigentes, sem remover required checks para contornar falhas.
 
 Referência primária: [Gitleaks v8.24.2 — CLI, configuração e fingerprints](https://github.com/gitleaks/gitleaks/blob/v8.24.2/README.md).
+
+## Remediação preparada em 2026-10-08
+
+Wemerson autorizou tratar as ocorrências e obter CI verde. O [plano operacional](../specs/106-secret-scanner-pilot/history-remediation-plan.md) registra o ensaio: 15 ocorrências removidas e uma fixture sintética proposta como exceção exata; scanner completo e controles negativos PASS. O CMS recebe DATABASE_PASSWORD somente por ambiente, com quatro testes novos RED/GREEN; sete testes de segurança e build Docker/Node 22 PASS. `.env` locais não foram alterados.
+
+Este resultado é local. A publicação ainda exige manutenção excepcional aprovada, pois develop proíbe force push e impõe PR/checks inclusive aos administradores. O CI remoto do PR #124 permanece bloqueado até atualizar as refs e executar os checks no head final. Não afirmar limpeza de main, outras branches, forks, caches ou clones, nem revogação de credenciais.

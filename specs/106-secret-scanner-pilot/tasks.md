@@ -89,3 +89,24 @@ As tabelas de preparação anteriores são snapshots; este registro posterior pr
 ### Evidência local final
 
 Histórico completo das duas refs na base 0efcc18: **16 findings**, BLOCKED (status interno 42). Nenhum valor foi impresso. Os 18 fingerprints removidos não equivalem à contagem final: cobertura/ref e deduplicação do scanner determinam as ocorrências detectadas. Harness final após relatório temporário sanitizado: PASS. Links Markdown e scanner PowerShell: PASS. H2 PENDING; CI remoto pendente.
+
+## Remediação após o MVP — 2026-10-08
+
+Este registro posterior prevalece sobre os snapshots anteriores para o recorte de remediação.
+Wemerson: “Então vamos tratar as ocorrências e o obter o CI verde”. H2 libera preparação/correção/ensaio de limpeza; US2, rotação, merge e alteração de proteção não foram aprovados por esse pedido.
+
+| Tarefa | Estado atual | Evidência |
+| --- | --- | --- |
+| T006/T007 | DONE MVP; integração bloqueada | PR #124; run 37818305235: seis outros jobs PASS, scanner 16 findings/42, Required Gate FAIL consequente |
+| T008 | DONE preparação; publicação depende H3 | history-remediation-plan.md: refs/SHA, clone independente, leases/atomic, proteção, recuperação, demais refs/clones |
+| T011 | PARTIAL, ensaio isolado PASS | 15 ocorrências removidas; uma fixture JWT sintética proposta como exceção exata; scanner completo sem findings não excepcionados; nenhuma ref remota modificada |
+| T009/T010 | PENDING US2 | Sem autenticação de valores encontrados ou rotação |
+| T012/T014 | PENDING | CI remoto do head final, manutenção/revisão e integração ainda não concluídos |
+
+CMS: fallback de DATABASE_PASSWORD removido para PostgreSQL/MySQL; testes RED com duas falhas pertinentes, depois GREEN (sete testes de segurança no total); build Docker Node 22 PASS. Nenhum contrato REST, regra de tenant ou código backend/frontend alterado. A fixture JWT foi identificada como frase de testes de 41 bytes, exclusiva de application-test.yml nas árvores originais e não reutilizada nos .env locais verificados. Nova exceção específica proposta para revisão humana; nenhuma exclusão ampla.
+
+Harnesses de padrões/exceções e história/refs/erros PASS; scanner completo do candidato develop 43a8f12 e entrega c4c1f3f PASS (0). Revisão assistiva independente PASS sem regressão concreta; não substitui aceite humano. Mapa/evidência sanitizados retidos em armazenamento gerenciado de segurança. Valores privados não publicados.
+
+A stack oficial foi parada durante a sessão (containers exited por volta de 18:29 UTC, backend 137/OOMKilled false). Resposta local de CMS não comprova runtime do container parado. Build/testes do CMS corrigido foram executados isoladamente; não atribuir à aplicação corrigida uma falha de host/serviço não identificado.
+
+H3 publicação PENDING: develop requer PR, Required Gate atualizado e conversas resolvidas, protege administradores e proíbe force push. Aprovar explicitamente a exceção de manutenção descrita no plano antes de operar. Não remover checks obrigatórios nem fazer merge do PR com CI vermelho. Remediação de main/demais refs/forks/caches/clones permanece fora do escopo.

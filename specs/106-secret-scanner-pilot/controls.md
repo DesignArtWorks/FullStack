@@ -40,3 +40,11 @@ Nenhuma nova regra constitucional, dependência runtime, proteção de branch ou
 ## Estado após H1 US1
 
 H1 aprovado: scanner histórico conectado ao CI, controles sintéticos RED/GREEN local e 18 exceções reais retiradas. Histórico real bloqueia por findings. H2 humano, CI remoto e remediação pendentes. Nenhum login/rotação/rewrite executado.
+
+## Controles verificados na remediação — 2026-10-08
+
+Automáticos: ambos os harnesses e scanner completo do candidato PASS; ausência/presença de DATABASE_PASSWORD coberta pelo npm run test:security já existente no CI; sete testes CMS e build Docker/Node 22 PASS. Seis demais jobs PASS apenas no run original 37818305235, não constitui aprovação do head reescrito.
+
+Humanos pendentes: classificação da fixture JWT e janela excepcional de manutenção para as duas refs; autorização específica de ajuste mínimo/restauração da proteção e gestão de clones/demais refs. Develop exige PR, CI / Required Gate, up-to-date e conversas resolvidas; proteção inclui admins e impede force push. Nenhum controle de GitHub foi desligado. Ver history-remediation-plan.md.
+
+Limites: ensaio não testa validade de credenciais, não revoga acesso, não limpa main/forks/caches/outros clones e não prova runtime da stack atualmente parada. O CI remoto do head final e os gates de integração continuam obrigatórios.

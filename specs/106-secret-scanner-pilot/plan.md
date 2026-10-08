@@ -128,3 +128,9 @@ Estado final de entrega constará do PR/issue com SHA/CI/aprovação reais; task
 CON-01/02/03/06/07: runtime, tenant, contratos e UI inalterados. CON-04: códigos 0/42/2 distinguem ausência de finding, finding e erro. CON-05: containers read-only sem rede/redaction; duas exceções sintéticas; findings reais bloqueiam; AB-002 pendente. CON-08: RED/GREEN, IDs e evidência no tasks/research; CI remoto pendente. CON-09: H1 aprovado, branch isolada; parar em H2. Sem autorização de merge, US2 ou rewrite. As tabelas anteriores preservam o snapshot de preparação, não execução posterior.
 
 Arquivo adicional de teste: scripts/security/test-secret-history.sh. Pesquisa: research.md. Histórico real BLOCKED; funcionamento esperado do gate perante ocorrências não excepcionadas, impedindo integração.
+
+## Estado após pedido de remediação — 2026-10-08
+
+O pedido humano para tratar ocorrências libera o plano operacional, correção CMS e ensaio isolado. Ver history-remediation-plan.md e o registro posterior em tasks.md. Ensaio: 15 ocorrências removidas, uma fixture sintética com exceção exata proposta, scanner e ambos os harnesses PASS; sete testes CMS e build Docker/Node 22 PASS. Código atual passa a consumir DATABASE_PASSWORD sem fallback embutido.
+
+CON-01/02/03/06/07: nenhuma dependência runtime, regra de domínio/tenant, contrato ou UI alterados. CON-04/05: classificação específica com evidência, sem alargar allowlists; valores privados somente temporários; local .env preservado; não inferir revogação. CON-08: RED/GREEN de credenciais CMS, IDs, scanner completo e revisão independente registrados. CON-09: cópia independente e nenhuma ref/proteção remota alterada; H3 da manutenção e CI remoto PENDING. Não concluir US2, merge ou #99 com este ensaio.
