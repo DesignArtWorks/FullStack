@@ -46,3 +46,17 @@ Referência primária: [Gitleaks v8.24.2 — CLI, configuração e fingerprints]
 Wemerson autorizou tratar as ocorrências e obter CI verde. O [plano operacional](../specs/106-secret-scanner-pilot/history-remediation-plan.md) registra o ensaio: 15 ocorrências removidas e uma fixture sintética proposta como exceção exata; scanner completo e controles negativos PASS. O CMS recebe DATABASE_PASSWORD somente por ambiente, com quatro testes novos RED/GREEN; sete testes de segurança e build Docker/Node 22 PASS. `.env` locais não foram alterados.
 
 Este resultado é local. A publicação ainda exige manutenção excepcional aprovada, pois develop proíbe force push e impõe PR/checks inclusive aos administradores. O CI remoto do PR #124 permanece bloqueado até atualizar as refs e executar os checks no head final. Não afirmar limpeza de main, outras branches, forks, caches ou clones, nem revogação de credenciais.
+
+## Publicação excepcional executada — 2026-10-08
+
+Registro posterior que prevalece sobre estados pendentes anteriores. Wemerson aprovou a exceção somente para este caso e confirmou a identidade no GitHub. Publicação atômica com leases exatos concluída: develop b83673be1c69ee1786f18cc922f1427b37d917db e branch do PR #124 9e098443ab2d1d4c17c3dde2fa740af9af824850. main e demais referências preexistentes não foram alteradas.
+
+A execução manual da base passou, mas o servidor rejeitou a primeira troca: workflow_dispatch não satisfaz checks obrigatórios. Como não há ancestral comum com a develop antiga, um gatilho push restrito à branch temporária security/issue-106-history-maintenance foi acrescentado à base saneada. O run [37832667534](https://github.com/DesignArtWorks/FullStack/actions/runs/37832667534) passou nos oito jobs. A entrega remove esse gatilho temporário; Required Gate e scanner permanecem obrigatórios.
+
+O scanner estrito local passou na ancestralidade completa dos dois SHAs publicados. O run real de PR [37833171774](https://github.com/DesignArtWorks/FullStack/actions/runs/37833171774) passou nos oito jobs, incluindo o scan de ambos os históricos e CI / Required Gate. Wemerson mesclou o PR #124 em 2026-10-08T19:39:11Z, commit 8b7a80a008b990ce6b9848a2d4e73b1d7d6dcf58. Os checks de qualquer entrega posterior exigem execução própria.
+
+As proteções originais foram restauradas e comparadas: PR obrigatório, Required Gate de GitHub Actions, atualização de branch, resolução de conversas e aplicação a administradores; force push e deleções proibidos. Incidente da janela: a restrição ao ator selecionado não persistiu na interface; ao detectar, a regra inteira foi imediatamente restaurada. Não permanece permissão excepcional.
+
+15 ocorrências históricas foram removidas; uma fixture JWT comprovadamente sintética foi aceita por fingerprint exato, somada às duas exceções sintéticas anteriores remapeadas. Nenhuma exclusão ampla de testes foi criada. O CMS deixou de ter fallback de senha PostgreSQL/MySQL e os sete testes de segurança/build passaram no CI real.
+
+T011 está concluída para as duas refs autorizadas; T013/T014 registram a entrega e integração do recorte US1 por #124. US2, rotação e fechamento de #106/#99 permanecem pendentes. Histórico em main/outras branches/forks/caches e clones antigos permanece fora do escopo. Reaplicar trabalho antigo somente em clone/base saneada com novo scan; não mesclar o histórico antigo. Credenciais não foram rotacionadas neste desenvolvimento local.
