@@ -129,4 +129,18 @@ As proteções originais foram restauradas e comparadas: PR obrigatório, Requir
 
 15 ocorrências históricas foram removidas; uma fixture JWT comprovadamente sintética foi aceita por fingerprint exato, somada às duas exceções sintéticas anteriores remapeadas. Nenhuma exclusão ampla de testes foi criada. O CMS deixou de ter fallback de senha PostgreSQL/MySQL e os sete testes de segurança/build passaram no CI real.
 
-T011 está concluída para as duas refs autorizadas; T013/T014 registram a entrega e integração do recorte US1 por #124. US2, rotação e fechamento de #106/#99 permanecem pendentes. Histórico em main/outras branches/forks/caches e clones antigos permanece fora do escopo. Reaplicar trabalho antigo somente em clone/base saneada com novo scan; não mesclar o histórico antigo. Credenciais não foram rotacionadas neste desenvolvimento local.
+T011 permanece PARTIAL: limpeza das duas refs autorizadas DONE; rotação no marco PENDING. T013/T014 registram os fatos de entrega/integração US1 por #124, sem declarar conformidade integral da governança ou conclusão de #106. US2, rotação e fechamento de #106/#99 permanecem pendentes. Histórico em main/outras branches/forks/caches e clones antigos permanece fora do escopo. Reaplicar trabalho antigo somente em clone/base saneada com novo scan; não mesclar o histórico antigo. Credenciais não foram rotacionadas neste desenvolvimento local.
+## Conciliação após revisão de #125 — 2026-10-08
+
+A revisão encontrou duas inconsistências documentais reais: T011 inclui rotação ainda não executada, e plan.md não tinha Constitution Check consolidado da publicação efetiva. Corrigidas neste recorte sem alterar a definição da tarefa, fabricar rotação ou datar um check posterior como prévio.
+
+| Tarefa / gate | Estado efetivo | Evidência e limite |
+| --- | --- | --- |
+| T006/T007 | DONE US1 | #124; run 37833171774, oito jobs SUCCESS; MVP revisado por Wemerson e integrado manualmente |
+| T008 | DONE plano/ensaio | history-remediation-plan.md e autorização específica somente deste caso |
+| T011 | PARTIAL | Limpeza das duas refs DONE e scan completo PASS; rotação no marco original PENDING, Wemerson |
+| T009/T010 | PENDING US2 | Contrato/diagnóstico/autenticação local não executados |
+| T012 | PARTIAL | CI real e proteção/restauração verificados; check constitucional da publicação foi registrado tardiamente e push protection específica não comprovada; não declarar aceite integral |
+| T013/T014 | PARTIAL no aceite global | Entrega/integração US1 reais em #124 (8b7a80a) e registro #125 (0e9e58d); lacuna de governança explícita no plan, sem promoção main/fechamento de #106/#99 |
+
+H2 US1: revisão e merge realizados por Wemerson em #124; não autoriza US2. H3 manutenção: aprovação excepcional já registrada, encerrada com proteção restaurada. A tabela pós-execução em plan.md discrimina CON-01–CON-09, fonte e pendência; não substitui um check pré-PR que não foi documentado no momento correto.
