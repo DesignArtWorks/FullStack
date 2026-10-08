@@ -110,3 +110,9 @@ Harnesses de padrões/exceções e história/refs/erros PASS; scanner completo d
 A stack oficial foi parada durante a sessão (containers exited por volta de 18:29 UTC, backend 137/OOMKilled false). Resposta local de CMS não comprova runtime do container parado. Build/testes do CMS corrigido foram executados isoladamente; não atribuir à aplicação corrigida uma falha de host/serviço não identificado.
 
 H3 publicação PENDING: develop requer PR, Required Gate atualizado e conversas resolvidas, protege administradores e proíbe force push. Aprovar explicitamente a exceção de manutenção descrita no plano antes de operar. Não remover checks obrigatórios nem fazer merge do PR com CI vermelho. Remediação de main/demais refs/forks/caches/clones permanece fora do escopo.
+
+### Autorização excepcional — somente este caso
+
+Wemerson confirmou “SIM. MAS PARA SOMENTE ESTE CASO” em 2026-10-08, após revisão do plano concreto: exceção sintética e manutenção de develop/branch PR #124 com force push restrito, suspensão temporária de exigência de PR e restauração imediata, mantendo checks obrigatórios. H3 APPROVED exclusivamente para essa operação; não é política permanente nem autorização para outros PRs, main, rotação ou merge com CI vermelho.
+
+Base sanitizada publicada em security/issue-106-history-maintenance (43a8f12e4774eccfe28ef61623485d4ab0fa90ff) apenas para validação CI prévia. Desenvolver a operação requer Required Gate aprovado nessa base, scanner estrito PASS, SHAs remotos ainda iguais aos esperados e restauração verificada da proteção. Estado da troca de refs/CI final registrado em evidência externa depois da operação.
