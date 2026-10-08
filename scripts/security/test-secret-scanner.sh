@@ -20,10 +20,10 @@ blocked() {
   name=$1
   value=$2
   set +e
-  printf '%s\n' "$value" | gitleaks stdin --config "$config" --redact=100 --no-banner --log-level error
+  printf '%s\n' "$value" | gitleaks stdin --config "$config" --exit-code 42 --ignore-gitleaks-allow --redact=100 --no-banner --log-level error
   result=$?
   set -e
-  if [ "$result" -ne 1 ]; then
+  if [ "$result" -ne 42 ]; then
     printf 'Expected detection for %s, got exit %s\n' "$name" "$result"
     exit 1
   fi
@@ -36,7 +36,7 @@ blocked slack "token=${slack_prefix}-123456789012-123456789012-$(printf '%s' "$s
 blocked aws "access_key=AKIA$(LC_ALL=C tr -dc 'A-Z0-9' < /dev/urandom | head -c 16)"
 blocked pem "$(printf '%s\n' '-----BEGIN RSA PRIVATE'' KEY-----' 'c3ludGhldGljLW5vdC1hLXJlYWwta2V5' '-----END RSA PRIVATE'' KEY-----')"
 printf '%s\n' 'NEXTAUTH_SECRET="ci-only-nextauth-secret-not-for-production"' |
-  gitleaks stdin --config "$config" --redact=100 --no-banner --log-level error
+  gitleaks stdin --config "$config" --exit-code 42 --ignore-gitleaks-allow --redact=100 --no-banner --log-level error
 
 # A removed secret must still be found by a complete-history scan.
 git -C "$work" init -q
@@ -48,10 +48,10 @@ git -C "$work" commit -qm 'Synthetic negative fixture'
 git -C "$work" rm -q fixture.txt
 git -C "$work" commit -qm 'Remove fixture'
 set +e
-gitleaks git "$work" --log-opts=--all --config "$config" --redact=100 --no-banner --log-level error
+gitleaks git "$work" --log-opts=--all --config "$config" --exit-code 42 --ignore-gitleaks-allow --redact=100 --no-banner --log-level error
 result=$?
 set -e
-test "$result" -eq 1
+test "$result" -eq 42
 printf 'Detected removed historical fixture; placeholder accepted\n'
 
 # Exempting one occurrence must not exempt its siblings or future copies.
@@ -70,7 +70,7 @@ scan_fixture() {
   expected_count=$2
   set +e
   gitleaks git "$work" --log-opts=--all --config "$config" \
-    --gitleaks-ignore-path "$work/.gitleaksignore" --redact=100 \
+    --gitleaks-ignore-path "$work/.gitleaksignore" --exit-code 42 --ignore-gitleaks-allow --redact=100 \
     --no-banner --log-level error --report-format json --report-path "$work/result.json"
   result=$?
   set -e
@@ -78,7 +78,7 @@ scan_fixture() {
   count=$(grep -c '"Fingerprint":' "$work/result.json" || true)
   test "$count" -eq "$expected_count"
 }
-scan_fixture 1 1
+scan_fixture 42 1
 grep -Fq "\"Fingerprint\": \"${pair_commit}:pair.txt:github-pat:2\"" "$work/result.json"
 printf 'Same-commit sibling remains detected\n'
 
@@ -91,7 +91,7 @@ printf 'token=ghp_%s\n' "$suffix" > "$work/new-file.txt"
 git -C "$work" add pair.txt new-file.txt
 git -C "$work" commit -qm 'Reintroduce synthetic values in a new commit'
 new_commit=$(git -C "$work" rev-parse HEAD)
-scan_fixture 1 2
+scan_fixture 42 2
 grep -Fq "\"Fingerprint\": \"${new_commit}:pair.txt:github-pat:1\"" "$work/result.json"
 grep -Fq "\"Fingerprint\": \"${new_commit}:new-file.txt:github-pat:1\"" "$work/result.json"
 printf 'New commit and new file remain detected\n'

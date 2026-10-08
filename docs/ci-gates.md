@@ -15,12 +15,15 @@ A organizacao restringe o GitHub Actions a workflows e actions locais. Por isso 
 | `Backend / Unit and Build` | uma unica execucao `mvn -B package`, que compila, executa os testes unitarios e gera o artefato em `maven:3.9-eclipse-temurin-25` |
 | `Backend / Integration` | exige `docker info`, executa `mvn -B -Pintegration test` em Java 25 com acesso ao Docker/Testcontainers e rejeita relatorios ausentes, vazios ou com testes ignorados |
 | `Frontend / Quality and Build` | `pnpm install --frozen-lockfile`, `pnpm run lint`, `pnpm run typecheck` e `pnpm run build` |
-| `CMS / Build` | `npm ci` e `npm run build` no Strapi oficial |
+| `CMS / Build` | `npm ci`, `npm run test:security` e `npm run build` no Strapi oficial |
+| `Security / Versioned Secret Scan` | PowerShell rastreado, controles sintéticos e Gitleaks histórico completo de develop/head PR; saída 42 bloqueia por finding, 2 por erro |
+| `Security / Dependency SCA` | CycloneDX/Trivy bloqueiam vulnerabilidades High/Critical não aceitas |
+| `Frontend / Security E2E` | Playwright Auth/BFF/Tenant com backend simulado; não substitui integração Spring |
 | `CI / Required Gate` | falha se qualquer check anterior falhar, for cancelado ou ignorado |
 
 O perfil Maven `integration` inclui as classes em `src/test/java/**/integration`. Elas usam Testcontainers com `disabledWithoutDocker = false`, PostgreSQL real, Redis real e Flyway. O passo posterior aos testes inspeciona os relatorios Surefire e impede sucesso quando a suite de integracao nao executa de verdade.
 
-Ainda nao existe uma suite automatizada confiavel no frontend. Nenhum check ficticio foi criado. Quando ela existir, o comando de teste deve ser incluido em `Frontend / Quality and Build` antes de tornar esse teste parte do gate.
+A suíte de segurança frontend executa em `Frontend / Security E2E`. Lint/typecheck/build permanecem no job de qualidade. O scanner histórico e suas limitações estão em [secret-scanning-issue-106.md](secret-scanning-issue-106.md).
 
 ## Branch protection
 
@@ -30,7 +33,7 @@ O nome a cadastrar como required status check nos rulesets de `develop` e `main`
 CI / Required Gate
 ```
 
-Os quatro checks detalhados permanecem visiveis para diagnostico, enquanto o gate agregado oferece um nome unico e estavel para a protecao. A configuracao do ruleset e a comprovacao de merge bloqueado pertencem a issue #41 e devem ser aplicadas somente depois que este workflow produzir ao menos uma execucao verde no GitHub.
+Os sete checks detalhados permanecem visiveis para diagnostico, enquanto o gate agregado oferece um nome unico e estavel para a protecao. A configuracao do ruleset e a comprovacao de merge bloqueado pertencem a issue #41 e devem ser aplicadas somente depois que este workflow produzir ao menos uma execucao verde no GitHub.
 
 ## Diagnostico
 
@@ -55,12 +58,4 @@ O inventario e as evidencias da consolidacao estao em
 
 ## Rollback
 
-Se um erro do workflow bloquear todos os merges:
-
-1. identificar o job defeituoso;
-2. remover temporariamente do ruleset somente `CI / Required Gate`, preservando outras protecoes;
-3. corrigir o workflow em branch dedicada e validar por `workflow_dispatch` ou Pull Request;
-4. restaurar o required check assim que houver execucao verde;
-5. registrar a causa e a recuperacao na issue correspondente.
-
-Nao desabilitar todas as protecoes de branch e nao converter falhas obrigatorias em skips silenciosos.
+Se um erro do workflow bloquear merges, investigar o job, corrigir em branch dedicada e validar via PR ou workflow_dispatch. Registrar causa e recuperação. Não remover required checks, transformar falhas em skips ou usar bypass para obter integração.
