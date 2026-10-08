@@ -24,7 +24,7 @@ H1: N/A nesta adoção — nenhum código existente é alterado, somente Markdow
 - [x] **T006 [US1] — Decompor execução por fases.** FR-004/005/008. Dep.: T005. Arquivos: tasks-template, plan-template, guia e tasks atual. Prova: fases, formato T/[P]/[US], contexto/estrutura/apoios, dependências, comandos de prova, aceite/resultado e ledger. Aceite: US1 demonstrável, tarefas atômicas e controles humanos separados de checkpoints.
 - [x] **T007 [US1] — Atualizar evidência do merge anterior.** FR-007. Dep.: T001/T006. Arquivo: specs/120-governanca-especificacao/tasks.md. Prova: SHA/CI/merge reais. Aceite: T011 concluído; promoção main continua pendente e fora da ordem atual.
 - [x] **T008 [US1] — Verificar MVP documental.** FR-001 a FR-008; SC-001 a SC-005. Dep.: T004 a T007. Prova: PowerShell verificou links/estrutura/gates/H1-H3 e checks inicial/final; git diff --cached --check e scanner versionado aprovados em 2026-10-08. Aceite: somente Markdown, runtime N/A justificado.
-- [ ] **T009 [US1] — Registrar commits/push e PR de revisão.** FR-004/005. Dep.: T008. Prova: SHA/URL reais. Aceite: diff do MVP disponível para Wemerson sem afirmar aprovação ou merge.
+- [x] **T009 [US1] — Registrar commits/push e PR de revisão.** FR-004/005. Dep.: T008. Prova: commit 6e9679de79ac0d21a46c1d6ad8718eea987aa127 enviado a origin; [PR #123](https://github.com/DesignArtWorks/FullStack/pull/123) aberto como rascunho para develop. Aceite: diff do MVP disponível para Wemerson; revisão H2 e merge pendentes.
 
 Checkpoint C3: roteiro/dossiê/exemplo e integração documental completos, verificações e diff disponíveis.
 
@@ -42,9 +42,9 @@ H3: nenhuma decisão bloqueadora conhecida; se aparecer, registrar pergunta/dono
 | Tarefa | Estado | Evidência | Commit / PR |
 | --- | --- | --- | --- |
 | T001–T003 | DONE | Merge #121, base/branch e origem/spec/plan | Base 91484273 |
-| T004–T007 | DONE | Artefatos do MVP produzidos | Commit pendente |
+| T004–T007 | DONE | Artefatos do MVP produzidos e enviados | 6e9679de79ac0d21a46c1d6ad8718eea987aa127 |
 | T008 | DONE | Links/estrutura/gates/diff/scanner aprovados em 2026-10-08; Constitution Check final com evidência | Resultado local |
-| T009 | TODO | Registro/PR ainda não executados | — |
+| T009 | DONE | Commit/push e PR rascunho para revisão H2 | [PR #123](https://github.com/DesignArtWorks/FullStack/pull/123) |
 | H2 / T010–T011 | PENDING | Revisão do MVP / CI / integração | Wemerson / GitHub |
 
 ## Validações
