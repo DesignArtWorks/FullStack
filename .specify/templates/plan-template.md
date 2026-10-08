@@ -3,9 +3,53 @@
 Spec: `<numero>-<slug>` | Issue: #<numero> | Branch: `<tipo>/issue-<numero>-<slug>`
 Base remota / SHA: <real> | Constituição / versão: <referência> | Data: <data>
 
-## Análise, impacto e arquivos previstos
+## Gate socrático e modo de execução
+
+Dossiê: `interview.md` da pasta da spec. Última revisão do pedido: <data/origem>. Gate: PENDING.
+<Canônicas/decisões confirmadas, PROV-IDs ligados a FR/RN, abertas/conflitos e recorte bloqueado; não fabricar entrevista.>
+
+Modo padrão: **por fases**, conforme decisão de Wemerson em 2026-10-08. Definir Setup → Foundational → US1/MVP → demais histórias → Polish/entrega. Descrever cada checkpoint e comando que comprova sua conclusão.
+
+| Parada humana | Artefato concreto a revisar | Evidência / aprovação / escopo liberado |
+| --- | --- | --- |
+| H1 — antes de alterar código existente | <spec/plan, arquivos, contratos, riscos e diff planejado> | PENDING; <responsável> |
+| H2 — após primeira fatia completa/MVP | <resultado demonstrável, diff e verificações reais> | PENDING; <responsável> |
+| H3 — decisão fora da spec | <lacuna, PROV-ID e tarefa dependente> | Bloqueia trecho até decisão; <responsável> |
+
+H1 pode ser N/A somente se nenhum código existente for alterado, com motivo. H2 não é dispensado por testes verdes. Aprovação anterior vale se seu escopo concreto está registrado. Documentos de adoção da política não comprovam entrevista retrospectiva. Commit/push/PR para revisão não significam aprovação da fase seguinte ou autorização de merge.
+
+## Technical Context — contexto técnico do recorte
+
+| Campo | Estado observado / escolha justificada / fonte |
+| --- | --- |
+| Linguagem e versão | <manifests/lockfiles e commit analisado> |
+| Dependências | <existentes reutilizadas; novidade exige justificativa> |
+| Ferramentas de teste/verificação | <suite/comandos reais pertinentes> |
+| Plataforma e ambientes | <Docker/Next/BFF/Spring/profiles ou N/A> |
+| Dados e persistência | <PostgreSQL/Flyway/Redis conforme necessidade ou N/A> |
+| Restrições | <constituição, autorização, compatibilidade, prazo e dados> |
+| Escala/performance | <requisito aprovado e origem; nunca inventar meta> |
+
+Tecnologia aparece no plano; a spec descreve comportamento/valor. Uma escolha técnica que muda resultado, direito, limite ou critério de sucesso deve voltar ao dono da regra e à spec, não ficar escondida como implementação.
+
+## Project Structure — análise, impacto e arquivos previstos
 
 <Código/testes existentes, fontes, consumidores, dívida, versões do commit analisado e arquivos antes de implementar. Distinguir análise estática de execução validada.>
+
+| Caminho | Criar/alterar/reusar | Motivo / FR/RN | Impacto em consumidores/testes |
+| --- | --- | --- | --- |
+| <arquivo real> | <ação> | <origem e decisão> | <impacto> |
+
+## Documentos de apoio, conforme necessidade
+
+| Artefato | Quando usar / conteúdo | Decisão nesta mudança |
+| --- | --- | --- |
+| research.md | Escolha técnica incerta; alternativas e decisão com fonte | <usar ou N/A justificado> |
+| data-model.md | Dados novos/alterados; entidades, tenant, constraints/migration | <usar ou N/A justificado> |
+| contracts/ | REST/BFF/eventos alterados; schema/erros/compatibilidade | <usar ou N/A justificado> |
+| quickstart.md | Verificação manual de feature; ambiente, comandos e resultado esperado | <usar ou cobrir no plano/N/A> |
+
+Não gerar arquivos vazios para cumprir ritual. Apoio complementa, não substitui Constitution Check, lista de arquivos e decisões humanas.
 
 ## Constitution Check
 

@@ -2,6 +2,9 @@
 
 Spec: `<numero>-<slug>` | Issue: #<numero> | Data: <data> | Estado: proposta
 
+Dossiê: `interview.md` da pasta da spec | Estado da entrevista: <real> | Confirmação humana: <origem/data>.
+Rascunho de spec não libera implementação: seguir o gate do roteiro `docs/ai/entrevista-socratica.md`.
+
 ## Problema, ator, valor e origem
 
 <Pedido e fontes locais. Distinguir decisão aprovada, estado atual e objetivo futuro.>
@@ -17,7 +20,7 @@ Como <ator>, quero <comportamento> para <valor>.
 
 ## Regras de origem
 
-| ID estável | Regra aprovada | Fonte exata / seção | Responsável / decisão |
+| ID estável | Regra aprovada | Fonte exata / seção / PROV-ID | Responsável / decisão |
 | --- | --- | --- | --- |
 | RN-<contexto>-001 | <regra> | <arquivo/issue/decisão> | <referência> |
 
@@ -63,6 +66,8 @@ Não marcar a Definition of Ready concluída com campo aplicável ausente. N/A e
 
 ## Definition of Ready
 
+- [ ] Dossiê revisado para o escopo atual; canônicas precisas e confirmação humana identificável.
+- [ ] Fases/categorias e termos quantificados registrados; abertas/conflitos bloqueadores resolvidos no recorte.
 - [ ] Problema/ator/valor e aceite definidos.
 - [ ] Regras/invariantes e casos de borda aprovados.
 - [ ] Contrato ou ausência de mudança identificado.
