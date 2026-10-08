@@ -1,6 +1,10 @@
 # RN-SEC106-002: exact synthetic occurrences reviewed in issue #106.
 # Historical local credentials are NOT exceptions; no authentication attempted.
 # Slack synthetic negative control formerly literal in the harness.
-82e2a3192a398ef8687aebe39fa2476e02290200:scripts/security/test-secret-scanner.sh:slack-bot-token:23
+1bb8d90f5461f3fec6fe10d13971fd90f3963bce:scripts/security/test-secret-scanner.sh:slack-bot-token:23
 # Playwright ci-only synthetic signing value, not a service credential.
-4cb0f89038a1663f3861287b2be53d64bbe3fc91:Frontend/web-app3/escala/playwright.config.ts:escala-secret-assignment:41
+c371503f7c6ef5d05c8acaab01eaf8c8c9c43b7a:Frontend/web-app3/escala/playwright.config.ts:escala-secret-assignment:41
+# RN-SEC106-002: deterministic 41-byte integration-test JWT fixture only.
+# Decodes to an explicit test-only phrase; isolated Testcontainers/test profile,
+# no occurrence in deployed configuration. Re-review if copied to another file.
+06d2428d4abcab2b94fde1570576b49329756689:Backend/java-app1/demo/src/test/resources/application-test.yml:generic-api-key:11
