@@ -23,6 +23,24 @@ Como <ator>, quero <comportamento> para <valor>.
 
 Preservar IDs existentes; usar RC/RD/RN quando adequado. Não inventar limite ou direito como suposição. Marcar `[NEEDS CLARIFICATION]`, indicar responsável e bloquear o trecho dependente quando faltar decisão.
 
+### Aceite por regra de negócio — repetir para cada ID
+
+| Campo obrigatório | Definição aprovada / evidência |
+| --- | --- |
+| ID e origem | <regra, fonte, responsável, FR/US associados> |
+| Pré-condições | <estado e dados necessários> |
+| Atores autorizados | <papéis e autorização por recurso> |
+| Tenant | <classificação e origem confiável do escopo; exceções explícitas> |
+| Happy path | <entrada/ação/saída observável> |
+| Bordas e invariantes | <limites exatos, datas, ausências e proibições> |
+| Erros de domínio | <condições e comportamento esperado> |
+| Efeitos colaterais | <persistência, auditoria, eventos e comunicações> |
+| Concorrência e idempotência | <conflito, retry e duplicidade; ou N/A justificado> |
+| Observabilidade | <eventos/correlação sem dados desnecessários> |
+| Testes / demonstração | <cenários positivos, negativos e cross-tenant pertinentes> |
+
+Não marcar a Definition of Ready concluída com campo aplicável ausente. N/A exige justificativa por campo.
+
 ## Requisitos
 
 | ID | O sistema deve... | Regra de origem | História |

@@ -48,3 +48,7 @@ SHA do commit que atualiza este ledger será informado no PR; não pode ser arma
 | Backend Docker/health/Swagger/OpenAPI local | N/A | Backend não alterado |
 | CI do PR / revisão / merge | PENDING | Não dispensado pelo escopo documental |
 | Promoção main / fechamento da issue | PENDING | Somente após T011/T012 |
+
+## Revisão antes do merge em develop
+
+Em 2026-10-08, a revisão do PR #121 levou a dois ajustes: tabela final explícita CON-01 a CON-09 no plano/template e ficha completa de aceite por regra no template da spec. O apontamento do ledger já estava corrigido em `ab9cbfa`. O CI desse head passou no run `37788331334`; o novo head exige revalidação. A ordem humana atual autoriza merge em develop; main não foi autorizado nesta etapa.

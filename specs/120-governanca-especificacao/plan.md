@@ -102,3 +102,21 @@ Para mudança backend futura, a partir da raiz e ambiente configurado: iniciar/r
 ## Rollback
 
 Reverter os commits desta issue via PR dedicado; remover a ponte AGENTS e os artefatos introduzidos no mesmo revert. Sem migration ou restauração de dados. Specs futuras que já dependam desta constituição precisam de revisão antes do revert. Não desfazer alterações de UI presentes no checkout principal.
+
+## Constitution Check final — revisão do PR #121
+
+Data: 2026-10-08. Head anterior revisado: `ab9cbfa950a39c4dfe3ca766f62c3f267494fdac`; esta atualização corrige a revisão de templates. Revisor local: Codex; autorização de integração develop: Wemerson nesta sessão. Evidência não equivale a revisão humana independente.
+
+| Princípio | Evidência do resultado | Resultado | Pendência / responsável |
+| --- | --- | --- | --- |
+| CON-01 | Somente Markdown; diretórios/fontes oficiais preservados e descritos na constituição. | PASS | Nenhuma |
+| CON-02 | Análise registra migração parcial; templates separam domínio, portas, adapters e wiring; código inalterado. | PASS | Nenhuma |
+| CON-03 | Template exige atores/tenant por regra; nenhuma sessão, query ou dado privado alterado. | PASS | Testes runtime N/A: sem mudança funcional |
+| CON-04 | Regras aprovadas preservadas; template exige bordas, invariantes, erro e concorrência; sem regra operacional nova. | PASS | Nenhuma |
+| CON-05 | Diff sem schema/PII/segredos; scanner versionado aprovado; Flyway e append-only preservados. | PASS | Migrations N/A: sem alteração de dados |
+| CON-06 | Nenhum REST/BFF/evento alterado; obrigação de OpenAPI/contratos descrita no plano. | PASS | Testes de contrato N/A: contrato inalterado |
+| CON-07 | Nenhuma UI/claim alterado; estados UX e evidência de claims exigidos no template. | PASS | Revisão visual N/A: sem alteração visual |
+| CON-08 | FR-001 a FR-007 ligados às tarefas/artefatos; links/IDs/diff/scanner aprovados e campos de aceite por regra incluídos. | PASS local | CI do novo head deve ser revalidado antes do merge |
+| CON-09 | Branch isolada e três commits enviados; PR #121 em develop; ledger T009/T010 atualizado. | PASS local | Merge e promoção pendentes até confirmação GitHub; destino autorizado nesta sessão: develop |
+
+O Monorepo CI do head `ab9cbfa` concluiu com sucesso (run `37788331334`). Correções posteriores exigem nova execução; o resultado anterior não cobre automaticamente o novo head. Registrar resultado final no PR/ledger.
