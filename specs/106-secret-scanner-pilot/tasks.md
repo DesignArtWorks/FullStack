@@ -116,3 +116,17 @@ H3 publicação PENDING: develop requer PR, Required Gate atualizado e conversas
 Wemerson confirmou “SIM. MAS PARA SOMENTE ESTE CASO” em 2026-10-08, após revisão do plano concreto: exceção sintética e manutenção de develop/branch PR #124 com force push restrito, suspensão temporária de exigência de PR e restauração imediata, mantendo checks obrigatórios. H3 APPROVED exclusivamente para essa operação; não é política permanente nem autorização para outros PRs, main, rotação ou merge com CI vermelho.
 
 Base sanitizada publicada em security/issue-106-history-maintenance (43a8f12e4774eccfe28ef61623485d4ab0fa90ff) apenas para validação CI prévia. Desenvolver a operação requer Required Gate aprovado nessa base, scanner estrito PASS, SHAs remotos ainda iguais aos esperados e restauração verificada da proteção. Estado da troca de refs/CI final registrado em evidência externa depois da operação.
+
+## Publicação excepcional executada — 2026-10-08
+
+Registro posterior que prevalece sobre estados pendentes anteriores. Wemerson aprovou a exceção somente para este caso e confirmou a identidade no GitHub. Publicação atômica com leases exatos concluída: develop b83673be1c69ee1786f18cc922f1427b37d917db e branch do PR #124 9e098443ab2d1d4c17c3dde2fa740af9af824850. main e demais referências preexistentes não foram alteradas.
+
+A execução manual da base passou, mas o servidor rejeitou a primeira troca: workflow_dispatch não satisfaz checks obrigatórios. Como não há ancestral comum com a develop antiga, um gatilho push restrito à branch temporária security/issue-106-history-maintenance foi acrescentado à base saneada. O run [37832667534](https://github.com/DesignArtWorks/FullStack/actions/runs/37832667534) passou nos oito jobs. A entrega remove esse gatilho temporário; Required Gate e scanner permanecem obrigatórios.
+
+O scanner estrito local passou na ancestralidade completa dos dois SHAs publicados. O run real de PR [37833171774](https://github.com/DesignArtWorks/FullStack/actions/runs/37833171774) passou nos sete jobs executores, incluindo o scan de ambos os históricos. A conclusão do Required Gate e dos heads posteriores é registrada no PR e nas evidências gerenciadas.
+
+As proteções originais foram restauradas e comparadas: PR obrigatório, Required Gate de GitHub Actions, atualização de branch, resolução de conversas e aplicação a administradores; force push e deleções proibidos. Incidente da janela: a restrição ao ator selecionado não persistiu na interface; ao detectar, a regra inteira foi imediatamente restaurada. Não permanece permissão excepcional.
+
+15 ocorrências históricas foram removidas; uma fixture JWT comprovadamente sintética foi aceita por fingerprint exato, somada às duas exceções sintéticas anteriores remapeadas. Nenhuma exclusão ampla de testes foi criada. O CMS deixou de ter fallback de senha PostgreSQL/MySQL e os sete testes de segurança/build passaram no CI real.
+
+US2, rotação, merge do PR e fechamento de #106/#99 não são concluídos por esta manutenção. Histórico em main/outras branches/forks/caches e clones antigos permanece fora do escopo. Reaplicar trabalho antigo somente em clone/base saneada com novo scan; não mesclar o histórico antigo. Credenciais não foram rotacionadas neste desenvolvimento local.
