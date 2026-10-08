@@ -2,6 +2,8 @@
 
 Entrada: [contexto](contexto-escala.md). Uso diário: [prompts](prompts-escala.md). UX/UI: [designer](designer-escala.md).
 
+Antes de implementar: [entrevista socrática](entrevista-socratica.md), [exemplo didático](exemplo-intervencao-socratica.md) e [template do dossiê](../../.specify/templates/interview-template.md). Entrevista → proposta validada → spec → plan → tasks → implementação por fases, com revisão humana antes de alterar código existente e após o MVP.
+
 Skills versionadas no repositório:
 - [Entrega de issues](../../.agents/skills/escala-issue-delivery/SKILL.md)
 - [Produto e design](../../.agents/skills/escala-product-design/SKILL.md)

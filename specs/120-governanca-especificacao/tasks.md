@@ -19,7 +19,7 @@ TODO, IN_PROGRESS, BLOCKED e DONE são estados de execução; checkbox marcado r
 - [x] **T008 — Validar documentos e Constitution Check final.** FR-001 a FR-007. Dep.: T005/T007. Aceite: links/IDs, diff, scanner de segredos e escopo aprovados; resultados registrados.
 - [x] **T009 — Criar commits coesos e push.** FR-005/007; CON-09. Dep.: T008. Aceite: arquivos previstos, issue/spec/TIDs no corpo, SHAs reais e push confirmado. Evidência: b35705a e f53cebe enviados a origin em 2026-10-08.
 - [x] **T010 — Abrir PR para develop.** FR-005/007; CON-09. Dep.: T009. Aceite: URL, diff, comandos/resultados, riscos/rollback e gates pendentes explícitos. Evidência: [PR #121](https://github.com/DesignArtWorks/FullStack/pull/121).
-- [ ] **T011 — Concluir revisão/CI e merge develop.** FR-007; CON-09. Dep.: T010. Aceite: checks verdes do head, aprovação exigida e merge protegido. PR aberto não conclui este passo.
+- [x] **T011 — Concluir revisão/CI e merge develop.** FR-007; CON-09. Dep.: T010. Evidência: oito jobs success no run 37790079431 do head 7241af8; apontamentos corrigidos/resolvidos; merge protegido do PR #121 autorizado por Wemerson e confirmado em 91484273f9ea473ce38d0c6e3364d62c9a12315b, em 2026-10-08.
 - [ ] **T012 — Promover main e encerrar issue.** FR-007; CON-09. Dep.: T011. Aceite: diff revisado, PR develop/main, gates/aprovação/merge/push, inventário final e fechamento somente ao término.
 
 ## Ledger de execução e commits
@@ -32,7 +32,8 @@ TODO, IN_PROGRESS, BLOCKED e DONE são estados de execução; checkbox marcado r
 | T008 | DONE | Links/IDs, staged diff e scanner aprovados em 2026-10-08; revisão CON-01 a CON-09 | Resultado documental |
 | T009 | DONE | Dois commits coesos enviados a origin em 2026-10-08 | b35705a; f53cebe |
 | T010 | DONE | PR aberto para develop com inventário, validações, riscos e rollback | [PR #121](https://github.com/DesignArtWorks/FullStack/pull/121) |
-| T011–T012 | TODO | Dependem de PR/checks/revisão e promoção | — |
+| T011 | DONE | CI verde, conversas resolvidas e merge #121 em develop | 91484273f9ea473ce38d0c6e3364d62c9a12315b |
+| T012 | TODO | Main não autorizado na ordem atual; promoção/fechamento continuam pendentes | — |
 
 SHA do commit que atualiza este ledger será informado no PR; não pode ser armazenado no próprio commit. Após squash, acrescentar SHA final no PR/issue ou atualização posterior.
 
@@ -43,10 +44,10 @@ SHA do commit que atualiza este ledger será informado no PR; não pode ser arma
 | Links locais e IDs/princípios | PASS | PowerShell: links de nove documentos resolvidos; CON-01 a CON-09 presentes em constituição/plano/template; 2026-10-08 |
 | git diff --check | PASS | git diff --cached --check, sem erros; 2026-10-08 |
 | Scanner de segredos versionados | PASS | ./scripts/security/check-versioned-secrets.ps1 após stage: Versioned secret scan passed; 2026-10-08 |
-| Constitution Check final | PASS documental | Revisão dos nove princípios e diff: somente dez arquivos Markdown previstos; entrega/CI seguem pendentes |
+| Constitution Check final | PASS documental | Revisão dos nove princípios e diff original; tabela final incluída em 7241af8; CI e merge concluídos conforme linha abaixo |
 | Testes/lint/typecheck/build local de runtime | N/A | Somente Markdown; aplicação/contratos inalterados |
 | Backend Docker/health/Swagger/OpenAPI local | N/A | Backend não alterado |
-| CI do PR / revisão / merge | PENDING | Não dispensado pelo escopo documental |
+| CI do PR / revisão / merge | PASS | Head 7241af8, run 37790079431 com oito jobs success; merge #121 em 91484273 |
 | Promoção main / fechamento da issue | PENDING | Somente após T011/T012 |
 
 ## Revisão antes do merge em develop
