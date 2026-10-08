@@ -12,6 +12,12 @@
 
 ## Materiais de trabalho com IA
 
+- Antes de qualquer implementação, executar `docs/ai/entrevista-socratica.md` e vincular o dossiê `specs/<numero>-<slug>/interview.md`; na retomada, conferir escopo/validade e reutilizar respostas humanas com origem, sem inventar entrevista ou aprovação.
+- O entrevistador faz uma pergunta por mensagem, percorre as fases/categorias e produz dossiê com proveniência; decisões bloqueadoras voltam ao responsável antes do trecho dependente.
+- O modo padrão aprovado por Wemerson em 2026-10-08 é execução por fases: revisão humana antes de alterar código existente e após a primeira fatia completa (MVP). Plano/tarefas devem registrar os pontos de parada, a evidência revisada e a autorização para avançar.
+- Uma tarefa com decisão ausente da spec para antes da implementação dependente; atualizar entrevista/spec/plan. Checkpoint automatizado, silêncio, timeout, commit ou testes verdes não substituem decisão humana.
+- Instrução explícita para executar somente uma fase e parar deve ser respeitada; não avançar nem fazer merge por inferência. Aprovação já registrada para um escopo concreto não deve ser pedida novamente.
+
 - Entrada concisa e fontes por atividade: [docs/ai/indice.md](docs/ai/indice.md).
 - Contexto: [docs/ai/contexto-escala.md](docs/ai/contexto-escala.md).
 - Prompts reutilizáveis: [docs/ai/prompts-escala.md](docs/ai/prompts-escala.md).

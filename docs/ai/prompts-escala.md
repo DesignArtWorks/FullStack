@@ -8,7 +8,15 @@ Leia docs/ai/contexto-escala.md e as instruções aplicáveis. Meu objetivo é [
 
 ## Implementar uma issue
 
-Use $escala-issue-delivery em .agents/skills/escala-issue-delivery/SKILL.md para implementar a issue [número]. Analise problema, ator, contratos, tenant, LGPD, arquivos e testes. Parta do develop remoto atualizado, crie branch no formato do AGENTS, implemente e valide. [Publicação/merge autorizados: indicar o escopo]. Não contorne proteção/checks. Entregue PR, evidências, riscos e rollback.
+Use $escala-issue-delivery em .agents/skills/escala-issue-delivery/SKILL.md para implementar a issue [número]. Primeiro execute docs/ai/entrevista-socratica.md: uma pergunta por mensagem, dossiê com proveniência e gate do recorte, reutilizando respostas humanas válidas com origem. Só depois da entrevista validada construa/atualize spec, plan e tasks. Analise problema, ator, contratos, tenant, LGPD, arquivos e testes. Parta do develop remoto atualizado e crie branch no formato do AGENTS. Execute por fases, com revisão humana antes de alterar código existente e após o MVP; decisões fora da spec retornam ao diálogo. [Fase autorizada / ponto de parada: indicar]. [Publicação/merge autorizados: indicar o escopo]. Não contorne proteção/checks. Entregue PR, evidências, riscos e rollback.
+
+## Iniciar entrevista socrática
+
+Leia o prompt pronto em [entrevista-socratica.md](entrevista-socratica.md) e aplique-o à issue [número] e ao pedido [texto]. Durante a entrevista, faça somente uma pergunta por mensagem, sem solução técnica. Registre respostas reais e fontes em specs/[numero-slug]/interview.md; não marque validado sem evidência humana.
+
+## Executar somente uma fase
+
+Leia AGENTS, interview.md, spec.md, plan.md e tasks.md de specs/[numero-slug]. Confira o gate socrático e as aprovações registradas. Execute somente [fase/IDs], valide o checkpoint com os comandos aplicáveis, mostre diff/resultado/riscos e pare para revisão humana. Não execute a próxima fase nem integre PR sem autorização correspondente. Se houver decisão ausente da spec, pare o trecho dependente e volte à entrevista. Comandos do Spec Kit são exemplos de conversa, não comandos instalados por esta documentação.
 
 ## Designer / UX
 
