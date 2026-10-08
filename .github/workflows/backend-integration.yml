@@ -8,6 +8,7 @@ on:
   push:
     branches:
       - main
+      - security/issue-106-history-maintenance
   workflow_dispatch:
 
 permissions:
