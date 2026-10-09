@@ -23,8 +23,8 @@ Checkpoint C2: testes/refs prontos; findings do histórico real podem impedir in
 
 ## US1 (P1), MVP
 
-- [ ] **T006 [US1] — Integrar scanner histórico ao job.** RN-SEC106-001/002; FR-001 a FR-004. Dep.: T005/H1. Arquivos: workflow, scan-secret-history.sh se necessário, controles. Prova: harness, refs/SHA, scan redigido e execução CI. Aceite: develop/head PR cobertos, erro não vira PASS, exceção específica, nenhum request externo de validade.
-- [ ] **T007 [US1] — Demonstrar MVP e conciliar docs.** FR-008/009; SC-001 a SC-004/008/009. Dep.: T006. Arquivos: docs/secret-scanning-issue-106.md, docs/ci-gates.md, ledger. Prova: diff, harness/CI e docs coerentes com execução. Aceite: resultados reais e limitações, sem afirmar scanner limpo se findings permanecem.
+- [x] **T006 [US1] — Integrar scanner histórico ao job.** RN-SEC106-001/002; FR-001 a FR-004. Dep.: T005/H1. Arquivos: workflow, scan-secret-history.sh se necessário, controles. Prova: harness, refs/SHA, scan redigido e execução CI. Aceite: develop/head PR cobertos, erro não vira PASS, exceção específica, nenhum request externo de validade.
+- [x] **T007 [US1] — Demonstrar MVP e conciliar docs.** FR-008/009; SC-001 a SC-004/008/009. Dep.: T006. Arquivos: docs/secret-scanning-issue-106.md, docs/ci-gates.md, ledger. Prova: diff, harness/CI e docs coerentes com execução. Aceite: resultados reais e limitações, sem afirmar scanner limpo se findings permanecem.
 
 Checkpoint C3: US1 demonstrável; integração ainda sujeita a finding/CI/revisão.
 
@@ -32,7 +32,7 @@ Checkpoint C3: US1 demonstrável; integração ainda sujeita a finding/CI/revis�
 
 ## US2 e remediação — recortes condicionais, após H2
 
-- [ ] **T008 — Preparar plano operacional de limpeza.** RN-SEC106-004; FR-005/007. Dep.: T004 e inventário. Arquivo: history-remediation-plan.md. Prova: refs/clones/backup privado/recovery/fingerprints, sem segredo. Aceite: AB-002 resolvida e autorização específica; preparar não é executar.
+- [x] **T008 — Preparar plano operacional de limpeza.** RN-SEC106-004; FR-005/007. Dep.: T004 e inventário. Arquivo: history-remediation-plan.md. Prova: refs/clones/backup privado/recovery/fingerprints, sem segredo. Aceite: AB-002 resolvida e autorização específica; preparar não é executar.
 - [ ] **T009 — Resolver e desenhar contrato local.** RN-SEC106-003; FR-006. Dep.: H2, AB-001/003. Arquivo: contracts/local-validation.md. Prova: decisão humana e mapping por tipo/serviço/fontes. Aceite: estados/efeitos/limites/alvos e tratamento de signing keys definidos; H1 próprio antes da implementação.
 - [ ] **T010 [US2] — Testar e implementar diagnóstico local.** RN-SEC106-003; FR-006. Dep.: T009/H1 próprio. Arquivo: tooling/testes conforme contrato aprovado. Prova: sandbox de sucesso/negado/indisponível e acesso real local quando autorizado. Aceite: histórico e .env ignorados, zero autenticação externa/valores em log/efeito de negócio; resultado inconclusivo não é credencial inválida.
 - [ ] **T011 — Aplicar remediação histórica/registrar rotação no marco.** RN-SEC106-004; FR-005/007. Dep.: T008 e autorização operacional específica. Prova: plano aprovado/ensaio/scan real redigido/ref SHA; rotação depois #103/#106/#109, antes gate final #99. Aceite: nenhuma reescrita/bypass implícito; rotação não marcada antes de executar.
@@ -99,7 +99,7 @@ Wemerson: “Então vamos tratar as ocorrências e o obter o CI verde”. H2 lib
 | --- | --- | --- |
 | T006/T007 | DONE MVP; integração bloqueada | PR #124; run 37818305235: seis outros jobs PASS, scanner 16 findings/42, Required Gate FAIL consequente |
 | T008 | DONE preparação; publicação depende H3 | history-remediation-plan.md: refs/SHA, clone independente, leases/atomic, proteção, recuperação, demais refs/clones |
-| T011 | PARTIAL, ensaio isolado PASS | 15 ocorrências removidas; uma fixture JWT sintética proposta como exceção exata; scanner completo sem findings não excepcionados; nenhuma ref remota modificada |
+| T011 | IN_PROGRESS | Ensaio isolado PASS: 15 ocorrências removidas; uma fixture JWT sintética proposta como exceção exata; scanner completo sem findings não excepcionados; nenhuma ref remota modificada neste snapshot |
 | T009/T010 | PENDING US2 | Sem autenticação de valores encontrados ou rotação |
 | T012/T014 | PENDING | CI remoto do head final, manutenção/revisão e integração ainda não concluídos |
 
@@ -129,4 +129,28 @@ As proteções originais foram restauradas e comparadas: PR obrigatório, Requir
 
 15 ocorrências históricas foram removidas; uma fixture JWT comprovadamente sintética foi aceita por fingerprint exato, somada às duas exceções sintéticas anteriores remapeadas. Nenhuma exclusão ampla de testes foi criada. O CMS deixou de ter fallback de senha PostgreSQL/MySQL e os sete testes de segurança/build passaram no CI real.
 
-T011 está concluída para as duas refs autorizadas; T013/T014 registram a entrega e integração do recorte US1 por #124. US2, rotação e fechamento de #106/#99 permanecem pendentes. Histórico em main/outras branches/forks/caches e clones antigos permanece fora do escopo. Reaplicar trabalho antigo somente em clone/base saneada com novo scan; não mesclar o histórico antigo. Credenciais não foram rotacionadas neste desenvolvimento local.
+T011 está BLOCKED no aceite completo: limpeza das duas refs autorizadas concluída; rotação no marco ainda pendente. T013/T014 também estão BLOCKED no aceite global; registram os fatos de entrega/integração US1 por #124, sem declarar conformidade integral da governança ou conclusão de #106. CON-09 da manutenção é FAIL: suspensão temporária da exigência de PR/force push e registro pré-PR ausente não cumprem a constituição vigente, apesar da autorização humana específica. Proteções restauradas não alteram esse resultado histórico. US2, rotação e fechamento de #106/#99 permanecem pendentes. Histórico em main/outras branches/forks/caches e clones antigos permanece fora do escopo. Reaplicar trabalho antigo somente em clone/base saneada com novo scan; não mesclar o histórico antigo. Credenciais não foram rotacionadas neste desenvolvimento local.
+## Conciliação após revisão de #125 — 2026-10-08
+
+A revisão encontrou duas inconsistências documentais reais: T011 inclui rotação ainda não executada, e plan.md não tinha Constitution Check consolidado da publicação efetiva. Corrigidas neste recorte sem alterar a definição da tarefa, fabricar rotação ou datar um check posterior como prévio.
+
+Este ledger é canônico para o estado atual das tarefas; tabelas anteriores são snapshots históricos e não devem alimentar automação de estado. Uma tarefa usa somente TODO, IN_PROGRESS, BLOCKED ou DONE; subentregas ficam na evidência. Checkboxes refletem este ledger. PASS/FAIL/PENDING são resultados de requisitos/checks, não estados de tarefa.
+
+| Tarefa / gate | Estado efetivo | Evidência e limite |
+| --- | --- | --- |
+| T001 | DONE | Exploração/base/isolamento registrados no snapshot inicial |
+| T002 | DONE | Entrevista Q001–Q027 e fechamento humano em interview.md |
+| T003 | DONE | Spec/plan/controles preparados e aprovação H1 registrada |
+| T004 | DONE | Imagem/digest, exceções específicas e controles verificados |
+| T005 | DONE | RED/GREEN do histórico e cenários de refs/erro registrados |
+| T006 | DONE | Integração US1 em #124; run 37833171774, oito jobs SUCCESS |
+| T007 | DONE | MVP US1 demonstrado, revisado por Wemerson e integrado em #124 |
+| T008 | DONE | history-remediation-plan.md e plano/ensaio aprovados somente neste caso |
+| T009 | BLOCKED | Contrato US2/AB-001/003 e H2 próprio pendentes, Wemerson |
+| T010 | BLOCKED | Depende de T009 e H1 próprio; diagnóstico/autenticação local não executados |
+| T011 | BLOCKED | Limpeza concluída e scan completo PASS; rotação no marco original pendente, Wemerson |
+| T012 | BLOCKED | CON-09 da manutenção FAIL e push protection específica não comprovada; decisão formal pendente, Wemerson |
+| T013 | BLOCKED | Publicação US1 real #124/#125; aceite global depende de T012, sem conformidade integral |
+| T014 | BLOCKED | Merge US1 real 8b7a80a e registro 0e9e58d; handoff final depende de T013/aceites; sem main/fechamento #106/#99 |
+
+H2 US1: revisão e merge realizados por Wemerson em #124; não autoriza US2. H3 manutenção: aprovação excepcional já registrada, encerrada com proteção restaurada. A tabela pós-execução em plan.md discrimina CON-01–CON-09, fonte e pendência; não substitui um check pré-PR que não foi documentado no momento correto.
