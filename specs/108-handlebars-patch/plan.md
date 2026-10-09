@@ -1,5 +1,7 @@
 # Correção incremental do Handlebars no CMS — #108 / #99-F
 
+Artefatos canônicos: [spec.md](spec.md), [tasks.md](tasks.md) e [interview.md](interview.md). Os checkboxes neste plano são resumo; o ledger de tasks.md e as evidências do head no PR determinam o estado atual. H1 real precedeu o patch; estes três arquivos foram acrescentados após revisão apontar sua ausência, sem alegar documentação prévia ou nova entrevista completa. H2 permanece pendente.
+
 ## Enquadramento e proveniência
 
 - [FATO] O SCA do PR #126, execução `37836456753`, bloqueou Handlebars 4.7.9 por CVE-2026-106445 e CVE-2026-106446; a falha do Required Gate é consequência desse bloqueio.
@@ -28,7 +30,7 @@ Constitution Check de desenho consolidado nesta fase (validações ainda pendent
 
 Este registro consolida o desenho na fase em curso; o H1 antecedeu a alteração do manifest. Não inventa aprovação de CI ou merge.
 
-Branch dedicada `security/issue-108-handlebars-patch`, baseada em develop `0e9e58dfbdeb46c3d99107739566d9dd10dd62da`. Adicionar override exato `handlebars: 4.7.10`, seguindo o mecanismo já usado no CMS. Não adicionar dependência direta nem atualizar Strapi, backend, frontend, banco ou contratos REST. Arquivos: package.json, package-lock.json, tests/handlebars-security.test.mjs e este plano.
+Branch dedicada `security/issue-108-handlebars-patch`, baseada em develop `0e9e58dfbdeb46c3d99107739566d9dd10dd62da`. Adicionar override exato `handlebars: 4.7.10`, seguindo o mecanismo já usado no CMS. Não adicionar dependência direta nem atualizar Strapi, backend, frontend, banco ou contratos REST. Arquivos: package.json, package-lock.json, tests/handlebars-security.test.mjs e spec/plan/tasks/interview desta pasta.
 
 Regras rastreáveis:
 
