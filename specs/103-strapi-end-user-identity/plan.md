@@ -65,3 +65,11 @@ Validação final em node:22-bookworm-slim (Node22.23.2, npm10.9.8) e PostgreSQL
 | CON-09 | PENDING — branch/base/H1 corretos; commit/PR para revisão, checks remotos/H2/integração não são presumidos |
 
 Resultado da fronteira: no_change no runtime. Testes reais mostram que o caminho reportado não reproduz nesta develop; administração e publicação/leitura legítimas preservadas. Risco residual: cobertura focal não prova todos os cenários de produção, não resolve demais filhos nem o scan final #99. Rollback: reverter somente commit dos testes/configuração/docs, preservando bloqueio de identidade já existente. H2 requer revisão humana deste diff e evidências antes de fase posterior/merge. As issues #103/#99 permanecem abertas. O SHA real desta entrega será registrado no PR e no resumo da conversa; não inventar auto-referência no próprio commit.
+
+## Revisão de fonte e H2 — registro posterior de 2026-10-27
+
+Este registro prevalece sobre as pendências históricas de H2/revisão acima. O revisor fresco completou o mesmo ciclo via conector GitHub sobre o patch real do PR129/head f6149c9, extensão base, configuração de banco e schema article: nenhum defeito concreto ou regressão de cobertura encontrado. Revisão somente de fonte; execução continua comprovada pelos comandos locais, CI remoto ainda pendente.
+
+Wemerson respondeu literalmente “Aprovar MVP e seguir para develop” ao H2 que identificou PR129/commit f6149c9, testes/build e condição de checks verdes. Autorização: avançar aos checks e integrar somente em develop se aprovados; #99 permanece aberta e produção/main bloqueadas. Não inferir promoção ou fechamento do gate global. PR: https://github.com/DesignArtWorks/FullStack/pull/129. Commit de implementação T001–T005: f6149c9e1abcda9255e33a76bce0b67de14810e9. CI127/run40533959727 iniciado, ainda não declarado aprovado. CON-09: H2 PASS; checks/merge PENDING.
+
+Os recursos descartáveis foram removidos após execução; o PostgreSQL original do Escala foi preservado. Documentação é o único diff posterior ao MVP aprovado.

@@ -30,3 +30,5 @@ Remover plugin inteiro quebraria permissões públicas/admin. Testar só JWT inv
 ## 5. Abertas
 
 H1 autorizado por PROV-103-004. H2: Wemerson revisa MVP antes de merge/fase posterior. Gate global #99, demais filhos e promoção main permanecem pendentes e fora do recorte.
+
+H2 em 2026-10-27: Wemerson respondeu “Aprovar MVP e seguir para develop” ao checkpoint do PR129/commit f6149c9. Revisão fonte do patch real/base sem defeito concreto. H2 autorizado para checks e integração develop condicionada a sucesso; produção/main e #99 continuam bloqueadas. Este registro posterior substitui apenas a pendência H2 acima.
