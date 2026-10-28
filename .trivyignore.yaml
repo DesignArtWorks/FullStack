@@ -10,3 +10,17 @@ vulnerabilities:
       Temporary risk acceptance for issue #108. braces 3.0.3 is transitive
       through supported Strapi/Next.js tooling and had no fixed upstream release
       on 2026-10-03. Review on upstream release or before expiration.
+  - id: CVE-2023-54404
+    paths:
+      - "package-lock.json"
+    purls:
+      - "pkg:npm/zod@3.25.76"
+    expired_at: 2026-11-28
+    statement: >-
+      Temporary risk acceptance for issue #99 (PR #130). zod 3.25.76 is pinned
+      only under koa-session 7.0.2 (latest release, required by Strapi 5.56.0),
+      which calls z.function().args() and breaks at runtime on zod 4 (verified).
+      It uses zod solely to validate static server-side options, never
+      request-controlled arrays, so the unbounded-array DoS is not reachable.
+      All other zod copies are 4.6.7 (fixed). Review on a koa-session release
+      with zod 4 support or before expiration.
