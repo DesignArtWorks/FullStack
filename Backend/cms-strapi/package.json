@@ -39,7 +39,7 @@
   "overrides": {
     "handlebars": "4.7.10",
     "source-map-js": "1.2.2",
-    "vite": "6.4.3",
+    "vite": "6.4.4",
     "axios": "1.20.0",
     "sharp": "0.35.5",
     "linkify-it": "5.0.2",
@@ -59,7 +59,13 @@
     "zod": "$zod",
     "koa-session": {
       "zod": "3.25.76"
-    }
+    },
+    "undici": "6.29.1",
+    "markdown-it": "14.3.3",
+    "dompurify": "3.4.17",
+    "follow-redirects": "^1.16.1",
+    "@modelcontextprotocol/server": "2.4.0",
+    "@modelcontextprotocol/node": "2.1.2"
   },
   "engines": {
     "node": ">=22.13.0 <23",
