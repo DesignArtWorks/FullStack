@@ -8,4 +8,3 @@ Gate H1 autorizado conforme interview.md; Constitution Check em plan.md. H2 aind
 - [ ] T004 RN-SCA99-001/003: SCA CMS+frontend; dispor remanescentes sem waiver automático, verificar consumidores reais/build.
 - [ ] T005 revisão fresca de candidato e CON final, inventário/diff/rollback e H2 de Wemerson.
 - [ ] T006 PR/checks/integração develop apenas se gates aprovados; #99/main/produção permanecem bloqueados até saída integral.
-
