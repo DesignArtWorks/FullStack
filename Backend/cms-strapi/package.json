@@ -27,19 +27,20 @@
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.0.0",
     "styled-components": "^6.0.0",
-    "zod": "^4.1.12"
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "baseline-browser-mapping": "^2.11.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "jsdom": "27.4.0"
   },
   "overrides": {
     "handlebars": "4.7.10",
     "source-map-js": "1.2.2",
-    "vite": "6.4.3",
+    "vite": "6.4.4",
     "axios": "1.20.0",
     "sharp": "0.35.5",
     "linkify-it": "5.0.2",
@@ -55,7 +56,14 @@
     "nodemailer": "10.0.14",
     "picomatch@^2.0.0": "^2.3.2",
     "postcss": "^8.5.18",
-    "shell-quote": "^1.9.0"
+    "shell-quote": "^1.9.0",
+    "dompurify": "3.4.17",
+    "@modelcontextprotocol/server": "2.3.1",
+    "follow-redirects": "1.16.2",
+    "markdown-it": "14.3.3",
+    "undici@^6.0.0": "6.29.1",
+    "zod@^4.0.0": "4.6.7",
+    "@modelcontextprotocol/node": "2.1.1"
   },
   "engines": {
     "node": ">=22.13.0 <23",
