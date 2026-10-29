@@ -37,6 +37,9 @@ public class ShiftSwapRequest {
 
     private LocalDate compensationDate;
 
+    @Version
+    private Long version;
+
     private String comments;
 
     private String adminComments;
