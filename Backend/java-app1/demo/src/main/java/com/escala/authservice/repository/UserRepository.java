@@ -1,12 +1,21 @@
 package com.escala.authservice.repository;
 
 import com.escala.authservice.entity.User;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.UUID;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
+    /** Serializa operacoes concorrentes do mesmo usuario (SELECT ... FOR UPDATE); exige transacao. */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select u from User u where u.id = :id")
+    Optional<User> lockById(@Param("id") UUID id);
+
     Optional<User> findByUsername(String username);
     Optional<User> findByEmail(String email);
     List<User> findAllByEmailIgnoreCase(String email);
