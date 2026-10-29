@@ -35,6 +35,11 @@ public class BillingService {
 
     @Transactional
     public void updateSubscriptionStatus(String stripeSubscriptionId, String stripeCustomerId, SubscriptionStatus status, String planType, UUID companyId) {
+        updateSubscriptionStatus(stripeSubscriptionId, stripeCustomerId, status, planType, companyId, null);
+    }
+
+    @Transactional
+    public void updateSubscriptionStatus(String stripeSubscriptionId, String stripeCustomerId, SubscriptionStatus status, String planType, UUID companyId, Long eventCreated) {
         Subscription subscription = subscriptionRepository.findByStripeSubscriptionId(stripeSubscriptionId)
                 .orElseGet(() -> {
                     if (companyId == null) {
@@ -47,6 +52,14 @@ public class BillingService {
                             .stripeSubscriptionId(stripeSubscriptionId)
                             .build();
                 });
+
+        if (eventCreated != null && subscription.getLastEventCreated() != null
+                && eventCreated < subscription.getLastEventCreated()) {
+            return;
+        }
+        if (eventCreated != null) {
+            subscription.setLastEventCreated(eventCreated);
+        }
 
         subscription.setStripeCustomerId(stripeCustomerId);
         subscription.setStatus(status);

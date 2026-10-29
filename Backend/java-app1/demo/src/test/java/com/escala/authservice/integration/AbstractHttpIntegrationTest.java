@@ -52,7 +52,7 @@ abstract class AbstractHttpIntegrationTest extends AbstractIntegrationTest {
     @BeforeEach
     void resetHttpState() {
         jdbcTemplate.execute("TRUNCATE TABLE marketing_leads, work_shifts, shift_swap_requests, time_records, "
-                + "subscriptions, ai_usage_logs RESTART IDENTITY CASCADE");
+                + "subscriptions, ai_usage_logs, stripe_processed_events RESTART IDENTITY CASCADE");
     }
 
     protected HttpResult send(String method, String path, String token, Object body, Map<String, String> headers) {
