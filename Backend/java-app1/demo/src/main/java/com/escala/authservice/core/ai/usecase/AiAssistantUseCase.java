@@ -7,6 +7,7 @@ import com.escala.authservice.entity.AiUsage;
 import com.escala.authservice.entity.Company;
 import com.escala.authservice.entity.User;
 import com.escala.authservice.repository.AiUsageRepository;
+import com.escala.authservice.repository.CompanyRepository;
 import com.escala.authservice.service.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.Map;
 public class AiAssistantUseCase {
     private final AiProviderPort aiProviderPort;
     private final AiUsageRepository aiUsageRepository;
+    private final CompanyRepository companyRepository;
     private final CurrentUserService currentUserService;
     private final CheckPlanLimitUseCase checkPlanLimitUseCase;
 
@@ -27,6 +29,8 @@ public class AiAssistantUseCase {
     public String executeAiTask(String userEmail, String feature, Map<String, Object> context, String instruction) {
         User user = currentUserService.requireCurrentUser(userEmail);
         Company company = user.getCompany();
+        // Trava a empresa: ler o consumo do mes e registrar o novo uso passam a ser atomicos.
+        companyRepository.lockById(company.getId());
 
         // 1. Validar se o plano permite IA
         checkPlanLimitUseCase.validateFeatureAccess(company.getPlanType(), "AI_ASSISTANT");

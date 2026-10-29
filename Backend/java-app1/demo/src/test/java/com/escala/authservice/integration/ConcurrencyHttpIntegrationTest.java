@@ -1,11 +1,13 @@
 package com.escala.authservice.integration;
 
+import com.escala.authservice.entity.AiUsage;
 import com.escala.authservice.entity.Company;
 import com.escala.authservice.entity.Employee;
 import com.escala.authservice.entity.Sector;
 import com.escala.authservice.entity.ShiftStatus;
 import com.escala.authservice.entity.User;
 import com.escala.authservice.entity.WorkShift;
+import com.escala.authservice.repository.AiUsageRepository;
 import com.escala.authservice.repository.SectorRepository;
 import com.escala.authservice.repository.ShiftSwapRequestRepository;
 import com.escala.authservice.repository.WorkShiftRepository;
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -45,6 +48,9 @@ class ConcurrencyHttpIntegrationTest extends AbstractHttpIntegrationTest {
 
     @Autowired
     private ShiftSwapRequestRepository swapRepository;
+
+    @Autowired
+    private AiUsageRepository aiUsageRepository;
 
     private Company company;
     private Sector sector;
@@ -169,6 +175,96 @@ class ConcurrencyHttpIntegrationTest extends AbstractHttpIntegrationTest {
                     .count();
             assertThat(compensations).as("escalas de compensacao").isEqualTo(1);
             assertThat(swapRepository.findAll()).hasSize(1);
+        }
+    }
+
+    @Nested
+    @DisplayName("limite de funcionarios do plano")
+    class EmployeeLimit {
+
+        @Test
+        @DisplayName("cadastros simultaneos no ultimo slot do plano nao ultrapassam o limite")
+        void parallelCreationsRespectPlanLimit() throws Exception {
+            company.setPlanType("ESSENTIAL");
+            companyRepository.saveAndFlush(company);
+            // ESSENTIAL permite 20 ativos; o dono ja conta 1, entao semeamos 18 e sobra um unico slot.
+            for (int i = 0; i < 18; i++) {
+                employeeRepository.saveAndFlush(Employee.builder()
+                        .fullName("Seed " + i).email("seed" + i + "@empresa-a.test").active(true).company(company).build());
+            }
+            java.util.concurrent.atomic.AtomicInteger sequence = new java.util.concurrent.atomic.AtomicInteger();
+
+            List<HttpResult> results = inParallel(PARALLEL, () -> {
+                int n = sequence.incrementAndGet();
+                Map<String, Object> body = new LinkedHashMap<>();
+                body.put("fullName", "Novo " + n);
+                body.put("email", "novo" + n + "@empresa-a.test");
+                body.put("active", true);
+                return post("/api/v1/employees", managerToken, body);
+            });
+
+            assertThat(results).allSatisfy(r -> assertThat(r.status()).isNotEqualTo(500));
+            assertThat(count(results, 200)).as("cadastros aceitos").isEqualTo(1);
+            assertThat(employeeRepository.countByActiveTrueAndCompanyId(company.getId())).isEqualTo(20);
+        }
+    }
+
+    @Nested
+    @DisplayName("creditos mensais de IA")
+    class AiCredits {
+
+        @Test
+        @DisplayName("chamadas simultaneas no ultimo credito consomem no maximo o limite do plano")
+        void parallelCallsRespectMonthlyCredits() throws Exception {
+            company.setPlanType("TRIAL");
+            companyRepository.saveAndFlush(company);
+            User owner = userRepository.findByEmailAndCompanyId("owner@empresa-a.test", company.getId()).orElseThrow();
+            // TRIAL permite 20 creditos/mes; semeamos 19 e sobra um unico credito.
+            for (int i = 0; i < 19; i++) {
+                aiUsageRepository.saveAndFlush(AiUsage.builder()
+                        .user(owner).company(company).feature("SEED").usedAt(OffsetDateTime.now())
+                        .creditsConsumed(1).promptRef("seed").build());
+            }
+
+            List<HttpResult> results = inParallel(PARALLEL,
+                    () -> post("/api/v1/ai/suggest-replacement", managerToken, Map.of("date", "2026-12-01")));
+
+            assertThat(results).allSatisfy(r -> assertThat(r.status()).isNotEqualTo(500));
+            assertThat(count(results, 200)).as("chamadas aceitas").isEqualTo(1);
+            assertThat(aiUsageRepository.count()).isEqualTo(20);
+        }
+    }
+
+    @Nested
+    @DisplayName("unicidade sob concorrencia")
+    class Uniqueness {
+
+        @Test
+        @DisplayName("postos de trabalho com o mesmo nome criados juntos geram um unico registro")
+        void parallelWorkPostsWithSameNameKeepOne() throws Exception {
+            company.setPlanType("PROFESSIONAL");
+            companyRepository.saveAndFlush(company);
+
+            List<HttpResult> results = inParallel(PARALLEL,
+                    () -> post("/api/v1/work-posts", managerToken, Map.of("name", "Recepcao")));
+
+            assertThat(results).allSatisfy(r -> assertThat(r.status()).isNotEqualTo(500));
+            assertThat(count(results, 200)).as("postos criados").isEqualTo(1);
+        }
+
+        @Test
+        @DisplayName("funcionarios com o mesmo e-mail criados juntos geram um unico registro e nenhum 500")
+        void parallelEmployeesWithSameEmailKeepOne() throws Exception {
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("fullName", "Duplicado");
+            body.put("email", "duplicado@empresa-a.test");
+            body.put("active", true);
+
+            List<HttpResult> results = inParallel(PARALLEL,
+                    () -> post("/api/v1/employees", managerToken, body));
+
+            assertThat(results).allSatisfy(r -> assertThat(r.status()).isNotEqualTo(500));
+            assertThat(count(results, 200)).as("funcionarios criados").isEqualTo(1);
         }
     }
 }
