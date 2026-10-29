@@ -2,19 +2,24 @@ package com.escala.authservice.controller;
 
 import com.escala.authservice.entity.*;
 import com.escala.authservice.repository.*;
+import com.escala.authservice.service.CurrentUserService;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/webhooks/chatbot")
@@ -26,6 +31,7 @@ public class ChatbotWebhookController {
     private final EmployeeRepository employeeRepository;
     private final UserRepository userRepository;
     private final AiUsageRepository aiUsageRepository;
+    private final CurrentUserService currentUserService;
 
     @Data
     public static class ChatbotWebhookRequest {
@@ -46,15 +52,23 @@ public class ChatbotWebhookController {
     @PostMapping
     public ResponseEntity<ChatbotWebhookResponse> processWebhook(
             @RequestBody ChatbotWebhookRequest request,
-            @RequestHeader(value = "X-Webhook-Secret", required = false) String providedSecret
+            @RequestHeader(value = "X-Webhook-Secret", required = false) String providedSecret,
+            Authentication authentication
     ) {
-        if (!webhookSecret.isBlank() && !Objects.equals(webhookSecret, providedSecret)) {
+        if (webhookSecret.isBlank() || !secretMatches(providedSecret)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Webhook secret invalido");
         }
+        UUID callerCompanyId = currentUserService.requireCurrentUser(authentication.getName()).getCompany().getId();
 
         String email = request.getSenderEmail() != null ? request.getSenderEmail() : "admin@escala.local";
-        List<User> users = userRepository.findAllByEmailIgnoreCase(email);
-        List<Employee> employees = employeeRepository.findAllByEmailIgnoreCase(email);
+        List<User> users = userRepository.findAllByEmailIgnoreCase(email).stream()
+                .filter(candidate -> candidate.getCompany() != null
+                        && Objects.equals(candidate.getCompany().getId(), callerCompanyId))
+                .toList();
+        List<Employee> employees = employeeRepository.findAllByEmailIgnoreCase(email).stream()
+                .filter(candidate -> candidate.getCompany() != null
+                        && Objects.equals(candidate.getCompany().getId(), callerCompanyId))
+                .toList();
         User user = users.size() == 1 ? users.getFirst() : null;
         Employee employee = employees.size() == 1 ? employees.getFirst() : null;
 
@@ -107,5 +121,14 @@ public class ChatbotWebhookController {
                 .build();
 
         return ResponseEntity.ok(res);
+    }
+
+    private boolean secretMatches(String providedSecret) {
+        if (providedSecret == null) {
+            return false;
+        }
+        return MessageDigest.isEqual(
+                webhookSecret.getBytes(StandardCharsets.UTF_8),
+                providedSecret.getBytes(StandardCharsets.UTF_8));
     }
 }

@@ -165,6 +165,32 @@ class WebhooksAndBillingHttpIntegrationTest extends AbstractHttpIntegrationTest 
     }
 
     @Nested
+    @DisplayName("POST /api/v1/webhooks/chatbot: isolamento entre empresas")
+    class ChatbotWebhookTenantScope {
+
+        @Test
+        @DisplayName("gestor da empresa B nao consulta colaborador da empresa A pelo e-mail")
+        void doesNotResolveSenderFromAnotherTenant() {
+            TenantFixture a = persistTenantFixture("empresa-a");
+            persistTenantFixture("empresa-b");
+            User colab = persistUser(a.company(), "colab@empresa-a.test", "colab-a", "USER");
+            persistEmployee(a.company(), colab, colab.getEmail(), "Colaborador A");
+            String tokenB = login("owner@empresa-b.test", "empresa-b");
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("senderEmail", "colab@empresa-a.test");
+            body.put("message", "preciso de uma troca de escala");
+
+            HttpResult result = send("POST", "/api/v1/webhooks/chatbot", tokenB, body,
+                    Map.of("X-Webhook-Secret", CHATBOT_SECRET));
+
+            assertThat(result.status()).isEqualTo(200);
+            assertThat(result.json().get("action").asString()).isEqualTo("UNKNOWN");
+            assertThat(result.body()).doesNotContain("Colaborador A", "colab@empresa-a.test");
+            assertThat(aiUsageRepository.count()).isZero();
+        }
+    }
+
+    @Nested
     @DisplayName("POST /api/v1/billing/checkout")
     class Checkout {
 

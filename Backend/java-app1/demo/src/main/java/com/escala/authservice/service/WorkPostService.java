@@ -1,5 +1,6 @@
 package com.escala.authservice.service;
 
+import com.escala.authservice.dto.WorkPostRequest;
 import com.escala.authservice.entity.Company;
 import com.escala.authservice.entity.Project;
 import com.escala.authservice.entity.WorkPost;
@@ -36,30 +37,31 @@ public class WorkPostService {
         return workPostRepository.findByCompany(company);
     }
 
-    public WorkPost create(String requesterEmail, WorkPost workPost) {
+    public WorkPost create(String requesterEmail, WorkPostRequest request) {
         Company company = getRequesterCompany(requesterEmail);
         policyService.requireOwnerOrAdmin(currentUserService.requireCurrentUser(requesterEmail), "Apenas administradores podem criar postos de trabalho");
-        
+
         // Validar plano
         checkPlanLimitUseCase.validateFeatureAccess(company.getPlanType(), "WORK_POSTS");
-        if (workPost.getName() == null || workPost.getName().trim().isBlank()) {
+        if (request == null || request.name() == null || request.name().trim().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nome do posto de trabalho e obrigatorio");
         }
-        if (workPostRepository.existsByCompanyAndNameIgnoreCase(company, workPost.getName().trim())) {
+        String name = request.name().trim();
+        if (workPostRepository.existsByCompanyAndNameIgnoreCase(company, name)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ja existe posto de trabalho com este nome na empresa");
         }
-        if (workPost.getProject() != null && workPost.getProject().getId() != null) {
-            Project project = projectRepository.findById(workPost.getProject().getId()).orElseThrow();
+
+        WorkPost workPost = new WorkPost();
+        workPost.setName(name);
+        workPost.setDescription(request.description());
+        workPost.setCompany(company);
+        if (request.projectId() != null) {
+            Project project = projectRepository.findById(request.projectId()).orElseThrow();
             if (project.getCompany() == null || !project.getCompany().getId().equals(company.getId())) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Projeto do posto deve pertencer a mesma empresa");
             }
             workPost.setProject(project);
-        } else {
-            workPost.setProject(null);
         }
-        
-        workPost.setName(workPost.getName().trim());
-        workPost.setCompany(company);
         return workPostRepository.save(workPost);
     }
 

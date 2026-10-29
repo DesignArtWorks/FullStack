@@ -1,6 +1,7 @@
 package com.escala.authservice.controller;
 
-import com.escala.authservice.entity.WorkPost;
+import com.escala.authservice.dto.WorkPostRequest;
+import com.escala.authservice.dto.WorkPostResponse;
 import com.escala.authservice.service.WorkPostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +18,13 @@ public class WorkPostController {
     private final WorkPostService workPostService;
 
     @GetMapping
-    public List<WorkPost> list(Authentication authentication) {
-        return workPostService.list(authentication.getName());
+    public List<WorkPostResponse> list(Authentication authentication) {
+        return workPostService.list(authentication.getName()).stream().map(WorkPostResponse::from).toList();
     }
 
     @PostMapping
-    public ResponseEntity<WorkPost> create(Authentication authentication, @RequestBody WorkPost workPost) {
-        return ResponseEntity.ok(workPostService.create(authentication.getName(), workPost));
+    public ResponseEntity<WorkPostResponse> create(Authentication authentication, @RequestBody WorkPostRequest request) {
+        return ResponseEntity.ok(WorkPostResponse.from(workPostService.create(authentication.getName(), request)));
     }
 
     @DeleteMapping("/{id}")
