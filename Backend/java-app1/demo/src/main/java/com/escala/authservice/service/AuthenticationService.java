@@ -170,12 +170,14 @@ public class AuthenticationService {
                 .filter(PasswordResetToken::isUsable)
                 .orElseThrow(() -> new IllegalArgumentException("Token de recuperacao invalido ou expirado"));
 
+        // Consome primeiro e de forma atomica: so a requisicao que ganhar a corrida troca a senha.
+        if (passwordResetTokenRepository.consume(resetToken.getId(), OffsetDateTime.now()) == 0) {
+            throw new IllegalArgumentException("Token de recuperacao invalido ou expirado");
+        }
+
         User user = resetToken.getUser();
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         repository.save(user);
-
-        resetToken.setUsedAt(OffsetDateTime.now());
-        passwordResetTokenRepository.save(resetToken);
 
         var userDetails = userDetails(user);
         var jwtToken = jwtService.generateToken(jwtClaims(user), userDetails);

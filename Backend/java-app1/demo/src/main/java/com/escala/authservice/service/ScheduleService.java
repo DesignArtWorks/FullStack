@@ -384,6 +384,11 @@ public class ScheduleService {
              throw new org.springframework.security.access.AccessDeniedException("Escala nao pertence a sua empresa");
         }
 
+        if (shiftSwapRequestRepository.existsByOriginalShiftIdAndStatusIn(
+                originalShift.getId(), List.of(SwapStatus.PENDING, SwapStatus.COLLEAGUE_APPROVED))) {
+            throw new IllegalStateException("Ja existe uma solicitacao de troca aberta para esta escala");
+        }
+
         new SolicitacaoTrocaEscala(
                 requester.getId(),
                 originalShift.getEmployee().getId(),

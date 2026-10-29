@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ShiftSwapRequestRepository extends JpaRepository<ShiftSwapRequest, UUID> {
+    boolean existsByOriginalShiftIdAndStatusIn(UUID originalShiftId, java.util.Collection<SwapStatus> statuses);
     long countByStatus(SwapStatus status);
     long countByStatusAndRequesterCompanyId(SwapStatus status, UUID companyId);
     List<ShiftSwapRequest> findByRequesterCompanyIdOrderByCreatedAtDesc(UUID companyId);

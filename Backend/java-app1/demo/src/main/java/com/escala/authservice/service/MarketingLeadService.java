@@ -6,6 +6,7 @@ import com.escala.authservice.core.commercial.domain.LeadQualification;
 import com.escala.authservice.entity.MarketingLead;
 import com.escala.authservice.repository.MarketingLeadRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,12 +17,16 @@ import java.util.Locale;
 @RequiredArgsConstructor
 public class MarketingLeadService {
     private final MarketingLeadRepository marketingLeadRepository;
+    private final JdbcTemplate jdbcTemplate;
 
     @Transactional
     public LeadCaptureResponse capture(LeadCaptureRequest request) {
         validate(request);
 
         String email = request.getEmail().trim().toLowerCase(Locale.ROOT);
+        // Serializa envios simultaneos do mesmo e-mail ate o fim da transacao; o indice unico e a rede de seguranca.
+        jdbcTemplate.query("select pg_advisory_xact_lock(hashtext(?))", statement -> statement.setString(1, "lead:" + email),
+                resultSet -> null);
         OffsetDateTime now = request.getCapturedAt() != null ? request.getCapturedAt() : OffsetDateTime.now();
         MarketingLead lead = marketingLeadRepository.findByEmailIgnoreCase(email)
                 .map(existing -> updateExisting(existing, request, now))
