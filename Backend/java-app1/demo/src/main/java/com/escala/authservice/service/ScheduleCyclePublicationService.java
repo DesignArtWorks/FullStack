@@ -25,6 +25,7 @@ public class ScheduleCyclePublicationService {
 
     @Transactional
     public ScheduleCycle publish(String email, UUID cyclePublicId) {
+        scheduleCycleService.requireCanManage(email);
         DistributedLockService.LockHandle lockHandle = distributedLockService.acquireScheduleCycleLock(cyclePublicId, "publish");
         try {
             ScheduleCycle cycle = scheduleCycleService.getCycle(email, cyclePublicId);
@@ -54,6 +55,7 @@ public class ScheduleCyclePublicationService {
 
     @Transactional
     public ScheduleCycle rectify(String email, UUID cyclePublicId) {
+        scheduleCycleService.requireCanManage(email);
         DistributedLockService.LockHandle lockHandle = distributedLockService.acquireScheduleCycleLock(cyclePublicId, "rectify");
         try {
             ScheduleCycle cycle = scheduleCycleService.getCycle(email, cyclePublicId);
@@ -74,6 +76,7 @@ public class ScheduleCyclePublicationService {
 
     @Transactional
     public ScheduleCycle archive(String email, UUID cyclePublicId) {
+        scheduleCycleService.requireCanManage(email);
         DistributedLockService.LockHandle lockHandle = distributedLockService.acquireScheduleCycleLock(cyclePublicId, "archive");
         try {
             ScheduleCycle cycle = scheduleCycleService.getCycle(email, cyclePublicId);

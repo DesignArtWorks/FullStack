@@ -32,6 +32,7 @@ public class ScheduleValidationAcknowledgementService {
         if (alertId == null || alertId.isBlank()) {
             throw new IllegalArgumentException("ID do alerta e obrigatorio");
         }
+        scheduleCycleService.requireCanManage(email);
         ScheduleCycle cycle = scheduleCycleService.getCycle(email, cyclePublicId);
         User requester = currentUserService.requireCurrentUser(email);
         CycleValidationAlertResponse alert = validationService.validateCycle(email, cyclePublicId).stream()

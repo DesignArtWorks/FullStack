@@ -30,6 +30,9 @@ class ScheduleCycleServiceTest {
     @Mock
     private CurrentUserService currentUserService;
 
+    @Mock
+    private PolicyService policyService;
+
     @InjectMocks
     private ScheduleCycleService service;
 
