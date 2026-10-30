@@ -40,15 +40,22 @@ test.describe('Contrato BFF: escala, trocas e ponto', () => {
       expect(cycles.body[0].tenant).toBe('tenant-a');
     });
 
-    test('usuários de tenants diferentes nunca recebem dados um do outro', async ({ browser }) => {
-      const contextB = await browser.newContext();
-      const pageB = await contextB.newPage();
-      await login(pageB, 'bob@tenant-b.test');
+    test('usuários de tenants diferentes nunca recebem dados um do outro', async ({ context }) => {
+      // 132-ci-integration-e2e:FR-003: authenticate B explicitly; the UI defaults to tenant A.
+      const csrf = await (await context.request.get('/api/auth/csrf')).json();
+      await context.request.post('/api/auth/callback/credentials', {
+        form: { csrfToken: csrf.csrfToken, email: 'bob@tenant-b.test', password, companySlug: 'tenant-b', json: 'true' },
+      });
+      const session = await (await context.request.get('/api/auth/session')).json();
+      expect(session.user.email).toBe('bob@tenant-b.test');
 
-      const swaps = await bffGet(pageB, '/api/bff/schedules/swap-requests');
-      expect(swaps.status).toBe(200);
-      expect(JSON.stringify(swaps.body)).not.toContain('tenant-a');
-      await contextB.close();
+      const swaps = await context.request.get('/api/bff/schedules/swap-requests');
+      expect(swaps.status()).toBe(200);
+      expect(await swaps.json()).toEqual([{ id: 'swap-tenant-b', status: 'PENDING', tenant: 'tenant-b' }]);
+
+      const crossTenant = await context.request.get('/api/bff/companies/tenant-a');
+      expect(crossTenant.status()).toBe(403);
+      expect((await crossTenant.json()).code).toBe('ACCESS_DENIED');
     });
 
     test('check-in ignora tenant enviado no corpo e usa o da sessão', async ({ page, baseURL }) => {
