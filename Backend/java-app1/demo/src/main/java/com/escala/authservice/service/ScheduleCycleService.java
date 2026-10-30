@@ -23,10 +23,12 @@ public class ScheduleCycleService {
 
     private final ScheduleCycleRepository scheduleCycleRepository;
     private final CurrentUserService currentUserService;
+    private final PolicyService policyService;
 
     @Transactional
     public ScheduleCycle createCycle(String email, ScheduleCycleRequest request) {
         User requester = getRequester(email);
+        policyService.requireCanManageSchedules(requester);
         validate(request);
         String timezone = normalizeTimezone(request.timezone());
 
@@ -63,6 +65,10 @@ public class ScheduleCycleService {
     public java.util.List<ScheduleCycle> listCycles(String email) {
         User requester = getRequester(email);
         return scheduleCycleRepository.findAllByCompanyId(requester.getCompany().getId());
+    }
+
+    public void requireCanManage(String email) {
+        policyService.requireCanManageSchedules(getRequester(email));
     }
 
     private User getRequester(String email) {

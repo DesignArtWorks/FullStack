@@ -8,18 +8,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiExceptionHandler.class);
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<ApiError> handleNotFound(NoSuchElementException ex, HttpServletRequest request) {
+        return error(HttpStatus.NOT_FOUND, "RESOURCE_NOT_FOUND", "Recurso nao encontrado.", ex, request, false);
+    }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiError> handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
@@ -36,6 +44,23 @@ public class ApiExceptionHandler {
         return error(status, status == HttpStatus.NOT_FOUND ? "NOT_FOUND" : "REQUEST_REJECTED",
                 status == HttpStatus.NOT_FOUND ? "Recurso nao encontrado." : "A requisicao foi rejeitada.",
                 ex, request, false);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiError> handleDataIntegrity(DataIntegrityViolationException ex, HttpServletRequest request) {
+        return error(HttpStatus.CONFLICT, "DATA_CONFLICT",
+                "A operacao conflita com um registro existente. Atualize a tela e tente novamente.", ex, request, false);
+    }
+
+    @ExceptionHandler(TransactionSystemException.class)
+    public ResponseEntity<ApiError> handleTransactionSystem(TransactionSystemException ex, HttpServletRequest request) {
+        Throwable root = ex.getMostSpecificCause();
+        if (root instanceof java.sql.SQLException sql && "23505".equals(sql.getSQLState())) {
+            return error(HttpStatus.CONFLICT, "DATA_CONFLICT",
+                    "A operacao conflita com um registro existente. Atualize a tela e tente novamente.", ex, request, false);
+        }
+        return error(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_ERROR",
+                "Nao foi possivel concluir a operacao.", ex, request, true);
     }
 
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)

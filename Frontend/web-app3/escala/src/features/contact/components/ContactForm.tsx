@@ -18,6 +18,7 @@ import {
   FormMessage 
 } from '@/components/ui/form';
 import { toast } from 'sonner';
+import { ContactClientAdapter } from '@/infrastructure/adapters/contact.adapter';
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
@@ -51,16 +52,7 @@ export function ContactForm() {
         throw new Error('Nao foi possivel validar o reCAPTCHA. Tente novamente.');
       }
 
-      const response = await fetch('/api/bff/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...values,
-          recaptchaToken,
-        }),
-      });
-
-      if (!response.ok) throw new Error('Falha ao enviar mensagem');
+      await ContactClientAdapter.send({ ...values, recaptchaToken });
 
       setSuccess(true);
       toast.success('Mensagem enviada com sucesso!');

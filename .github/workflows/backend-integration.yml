@@ -101,18 +101,8 @@ jobs:
         shell: bash
         working-directory: Backend/java-app1/demo
         run: |
-          shopt -s nullglob
-          reports=(target/surefire-reports/com.escala.authservice.integration.*IntegrationTest.txt)
-          if (( ${#reports[@]} == 0 )); then
-            echo "No integration test report was produced."
-            exit 1
-          fi
-          for report in "${reports[@]}"; do
-            if ! grep -Eq 'Tests run: [1-9][0-9]*, Failures: 0, Errors: 0, Skipped: 0' "$report"; then
-              echo "Integration report is skipped, empty or unsuccessful: $report"
-              exit 1
-            fi
-          done
+          python3 ../../../scripts/ci/test-integration-reports.py
+          python3 ../../../scripts/ci/check-integration-reports.py target/surefire-reports
 
   frontend:
     name: Frontend / Quality and Build

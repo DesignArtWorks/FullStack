@@ -1,7 +1,7 @@
 package com.escala.authservice.controller;
 
 import com.escala.authservice.dto.OperationalCapacityRequest;
-import com.escala.authservice.entity.OperationalCapacity;
+import com.escala.authservice.dto.schedule.OperationalCapacityResponse;
 import com.escala.authservice.service.OperationalCapacityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,34 +19,40 @@ public class OperationalCapacityController {
     private final OperationalCapacityService operationalCapacityService;
 
     @GetMapping
-    public ResponseEntity<List<OperationalCapacity>> listCapacities(Authentication authentication) {
-        return ResponseEntity.ok(operationalCapacityService.listCapacities(authentication.getName()));
+    public ResponseEntity<List<OperationalCapacityResponse>> listCapacities(Authentication authentication) {
+        return ResponseEntity.ok(operationalCapacityService.listCapacities(authentication.getName()).stream()
+                .map(OperationalCapacityResponse::from)
+                .toList());
     }
 
     @GetMapping("/target")
-    public ResponseEntity<List<OperationalCapacity>> listByTarget(
+    public ResponseEntity<List<OperationalCapacityResponse>> listByTarget(
             Authentication authentication,
             @RequestParam UUID targetId,
             @RequestParam String targetType
     ) {
-        return ResponseEntity.ok(operationalCapacityService.listByTarget(authentication.getName(), targetId, targetType));
+        return ResponseEntity.ok(operationalCapacityService.listByTarget(authentication.getName(), targetId, targetType).stream()
+                .map(OperationalCapacityResponse::from)
+                .toList());
     }
 
     @PostMapping
-    public ResponseEntity<OperationalCapacity> createCapacity(
+    public ResponseEntity<OperationalCapacityResponse> createCapacity(
             Authentication authentication,
             @RequestBody OperationalCapacityRequest request
     ) {
-        return ResponseEntity.ok(operationalCapacityService.createCapacity(authentication.getName(), request));
+        return ResponseEntity.ok(OperationalCapacityResponse.from(
+                operationalCapacityService.createCapacity(authentication.getName(), request)));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<OperationalCapacity> updateCapacity(
+    public ResponseEntity<OperationalCapacityResponse> updateCapacity(
             Authentication authentication,
             @PathVariable UUID id,
             @RequestBody OperationalCapacityRequest request
     ) {
-        return ResponseEntity.ok(operationalCapacityService.updateCapacity(authentication.getName(), id, request));
+        return ResponseEntity.ok(OperationalCapacityResponse.from(
+                operationalCapacityService.updateCapacity(authentication.getName(), id, request)));
     }
 
     @DeleteMapping("/{id}")

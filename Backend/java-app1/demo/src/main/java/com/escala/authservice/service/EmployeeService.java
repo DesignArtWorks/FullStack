@@ -5,6 +5,7 @@ import com.escala.authservice.entity.Company;
 import com.escala.authservice.entity.Employee;
 import com.escala.authservice.entity.Project;
 import com.escala.authservice.entity.Sector;
+import com.escala.authservice.repository.CompanyRepository;
 import com.escala.authservice.repository.EmployeeRepository;
 import com.escala.authservice.repository.ProjectRepository;
 import com.escala.authservice.repository.SectorRepository;
@@ -13,6 +14,7 @@ import com.escala.authservice.core.commercial.usecase.CheckPlanLimitUseCase;
 import com.escala.authservice.security.TenantContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Locale;
@@ -22,6 +24,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class EmployeeService {
     private final EmployeeRepository employeeRepository;
+    private final CompanyRepository companyRepository;
     private final SectorRepository sectorRepository;
     private final ProjectRepository projectRepository;
     private final CompanyService companyService;
@@ -60,11 +63,14 @@ public class EmployeeService {
         }
     }
 
+    @Transactional
     public Employee create(String requesterEmail, EmployeeRequest request) {
         Company company = getRequesterCompany(requesterEmail);
         checkEmployeeAdmin(requesterEmail, company);
+        // Trava a empresa: contar os ativos e inserir passam a ser atomicos por empresa.
+        companyRepository.lockById(company.getId());
         validateEmployeeRequest(company, request, null);
-        
+
         int currentCount = (int) employeeRepository.countByActiveTrueAndCompanyId(company.getId());
         if (!checkPlanLimitUseCase.canAddEmployee(company.getPlanType(), currentCount)) {
             throw new IllegalStateException("Limite de funcionários atingido para o plano atual: " + company.getPlanType() + ". Faça upgrade do seu plano.");

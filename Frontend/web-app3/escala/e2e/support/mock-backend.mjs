@@ -78,5 +78,15 @@ createServer(async (request, response) => {
     return json(response, 200, { tenant, accepted: true }, { 'x-correlation-id': correlationId });
   }
 
+  if (request.method === 'GET' && url.pathname === '/api/v1/schedules/swap-requests') {
+    if (!tenant) return json(response, 401, { code: 'AUTHENTICATION_REQUIRED' }, { 'x-correlation-id': correlationId });
+    return json(response, 200, [{ id: `swap-${tenant}`, status: 'PENDING', tenant }], { 'x-correlation-id': correlationId });
+  }
+
+  if (request.method === 'GET' && url.pathname === '/api/v1/scheduling/cycles') {
+    if (!tenant) return json(response, 401, { code: 'AUTHENTICATION_REQUIRED' }, { 'x-correlation-id': correlationId });
+    return json(response, 200, [{ id: `cycle-${tenant}`, year: 2026, month: 7, status: 'RASCUNHO', tenant }], { 'x-correlation-id': correlationId });
+  }
+
   return json(response, 404, { code: 'NOT_FOUND' }, { 'x-correlation-id': correlationId });
 }).listen(port, '127.0.0.1');

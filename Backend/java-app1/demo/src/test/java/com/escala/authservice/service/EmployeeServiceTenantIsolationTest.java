@@ -6,6 +6,7 @@ import com.escala.authservice.entity.Company;
 import com.escala.authservice.entity.Employee;
 import com.escala.authservice.entity.Role;
 import com.escala.authservice.entity.User;
+import com.escala.authservice.repository.CompanyRepository;
 import com.escala.authservice.repository.EmployeeRepository;
 import com.escala.authservice.repository.ProjectRepository;
 import com.escala.authservice.repository.SectorRepository;
@@ -36,6 +37,7 @@ import static org.mockito.Mockito.when;
 class EmployeeServiceTenantIsolationTest {
 
     @Mock EmployeeRepository employeeRepository;
+    @Mock CompanyRepository companyRepository;
     @Mock SectorRepository sectorRepository;
     @Mock ProjectRepository projectRepository;
     @Mock CompanyService companyService;

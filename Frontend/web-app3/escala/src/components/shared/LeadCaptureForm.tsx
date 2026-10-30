@@ -6,7 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, CheckCircle2, MailWarning, ShieldCheck, Sparkles, UsersRound } from 'lucide-react';
 import { toast } from 'sonner';
-import { API_ROUTES } from '@/constants';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -32,6 +31,7 @@ import {
 import { cn } from '@/lib/utils';
 import { getRecaptchaToken } from '@/lib/recaptcha';
 import type { LeadCaptureResponse } from '@/types/campaign';
+import { LeadCaptureAdapter } from '@/infrastructure/adapters/lead-capture.adapter';
 
 type LeadCaptureFormProps = {
   title: string;
@@ -116,28 +116,16 @@ export function LeadCaptureForm({
         throw new Error('Nao foi possivel validar o reCAPTCHA. Tente novamente.');
       }
 
-      const response = await fetch(API_ROUTES.LEADS, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...values,
-          landingPageSlug,
-          campaignSlug,
-          consentVersion: 'marketing-consent-v1',
-          source: 'LANDING_PAGE',
-          recaptchaToken,
-        }),
+      const data = await LeadCaptureAdapter.capture({
+        ...values,
+        landingPageSlug,
+        campaignSlug,
+        consentVersion: 'marketing-consent-v1',
+        source: 'LANDING_PAGE',
+        recaptchaToken,
       });
 
-      const data = (await response.json()) as Partial<LeadCaptureResponse> & { message?: string };
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Nao foi possivel registrar o lead');
-      }
-
-      setResult(data as LeadCaptureResponse);
+      setResult(data);
       form.reset({
         name: '',
         email: '',

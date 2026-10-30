@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalTime;
@@ -24,6 +25,7 @@ public class CheckInService {
     private final CheckPlanLimitUseCase checkPlanLimitUseCase;
     private final CurrentUserService currentUserService;
 
+    @Transactional
     public void validateAndRegister(String userEmail, CheckInRequest request, String ipAddress) {
         if (request == null || request.getLatitude() == null || request.getLongitude() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Coordenadas de geolocalização do check-in são obrigatórias");
@@ -65,7 +67,9 @@ public class CheckInService {
                 String.format("Fora do raio permitido. Distância: %.2fm, Máximo: %dm", distance, company.getAllowedRadius()));
         }
 
-        // 3. Determinar tipo de registro (ENTRY/EXIT)
+        // 3. Determinar tipo de registro (ENTRY/EXIT). O lock na linha do usuario serializa
+        // check-ins simultaneos, para que a alternancia seja calculada sobre o estado commitado.
+        userRepository.lockById(user.getId());
         OffsetDateTime now = OffsetDateTime.now();
         OffsetDateTime startOfDay = now.with(LocalTime.MIN);
         OffsetDateTime endOfDay = now.with(LocalTime.MAX);

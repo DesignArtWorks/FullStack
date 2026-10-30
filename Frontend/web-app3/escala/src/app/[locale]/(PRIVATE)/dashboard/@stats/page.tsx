@@ -3,14 +3,12 @@ import { StatsService } from '@/core/application/services/stats.service';
 import { Users, AlertTriangle, ArrowLeftRight, Activity } from 'lucide-react';
 import { getRequiredServerAuth } from '@/lib/auth/server-auth';
 import { DashboardStatCard } from '@/components/dashboard/DashboardStatCard';
+import { canManageSchedules } from '@/lib/permissions';
 
 export default async function StatsSlot() {
   const { accessToken, session } = await getRequiredServerAuth();
   const roles = session.user.roles ?? [];
-  const isManagerOrAdmin =
-    roles.includes('ADMIN') ||
-    roles.includes('OWNER') ||
-    roles.some((role) => role.startsWith('MANAGER'));
+  const isManagerOrAdmin = canManageSchedules(roles);
 
   if (!isManagerOrAdmin) {
     return null;

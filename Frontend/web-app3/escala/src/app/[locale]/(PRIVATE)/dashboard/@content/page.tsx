@@ -3,11 +3,12 @@ import { ShiftList } from '@/components/dashboard/ShiftList';
 import { AdminSwapManagement } from '@/components/dashboard/AdminSwapManagement';
 import { getRequiredServerAuth } from '@/lib/auth/server-auth';
 import { Badge } from '@/components/ui/badge';
+import { isAdminOrOwner } from '@/lib/permissions';
 
 export default async function ContentSlot() {
   const { session, accessToken } = await getRequiredServerAuth();
 
-  const isAdmin = session.user.roles.includes('ADMIN') || session.user.roles.includes('OWNER');
+  const isAdmin = isAdminOrOwner(session.user.roles);
 
   const [shifts, shiftSwaps] = await Promise.all([
     getShifts(accessToken),
