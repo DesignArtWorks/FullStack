@@ -5,6 +5,7 @@
   "description": "A Strapi application",
   "scripts": {
     "test:security": "node --experimental-strip-types --test tests/*.test.mjs",
+    "test:security:integration": "node --test tests/integration/*.test.cjs",
     "build": "strapi build",
     "console": "strapi console",
     "deploy": "strapi deploy",
