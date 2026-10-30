@@ -7,6 +7,7 @@ import com.escala.authservice.dto.GenerateScheduleRequest;
 import com.escala.authservice.dto.schedule.ShiftResponse;
 import com.escala.authservice.dto.schedule.ShiftSwapResponse;
 import com.escala.authservice.service.ScheduleService;
+import com.escala.authservice.service.ShiftSwapService;
 import com.escala.authservice.service.StatsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ScheduleController {
     private final ScheduleService scheduleService;
+    private final ShiftSwapService shiftSwapService;
     private final StatsService statsService;
 
     @GetMapping
@@ -39,7 +41,7 @@ public class ScheduleController {
 
     @GetMapping("/swap-requests")
     public List<ShiftSwapResponse> swapRequests(Authentication authentication) {
-        return scheduleService.swapRequests(authentication.getName()).stream()
+        return shiftSwapService.swapRequests(authentication.getName()).stream()
                 .map(ShiftSwapResponse::from)
                 .toList();
     }
@@ -49,17 +51,17 @@ public class ScheduleController {
             @RequestBody CreateShiftSwapRequest request,
             Authentication authentication
     ) {
-        return ResponseEntity.ok(ShiftSwapResponse.from(scheduleService.requestSwap(request, authentication.getName())));
+        return ResponseEntity.ok(ShiftSwapResponse.from(shiftSwapService.requestSwap(request, authentication.getName())));
     }
 
     @PatchMapping("/swap-requests/{id}/decision")
     public ResponseEntity<ShiftSwapResponse> decideSwap(@PathVariable UUID id, @RequestBody DecideShiftSwapRequest request, Authentication authentication) {
-        return ResponseEntity.ok(ShiftSwapResponse.from(scheduleService.decideSwap(id, request, authentication.getName())));
+        return ResponseEntity.ok(ShiftSwapResponse.from(shiftSwapService.decideSwap(id, request, authentication.getName())));
     }
 
     @PatchMapping("/swap-requests/{id}/colleague-approval")
     public ResponseEntity<ShiftSwapResponse> approveByColleague(@PathVariable UUID id, Authentication authentication) {
-        return ResponseEntity.ok(ShiftSwapResponse.from(scheduleService.approveByColleague(id, authentication.getName())));
+        return ResponseEntity.ok(ShiftSwapResponse.from(shiftSwapService.approveByColleague(id, authentication.getName())));
     }
 
     @GetMapping("/dashboard-summary")

@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { PayrollItem } from '@/core/domain/models/payroll.model';
+import { PayrollReportClientAdapter } from '@/infrastructure/adapters/payroll-report.adapter';
 import { 
   Table, 
   TableBody, 
@@ -30,9 +31,8 @@ export function PayrollReportManager() {
   const fetchReport = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/bff/reports/payroll?month=${month}`);
-      if (response.ok) {
-        const result = await response.json();
+      const result = await PayrollReportClientAdapter.fetchReport(month);
+      if (result) {
         setData(result);
       }
     } catch (error) {
@@ -45,7 +45,7 @@ export function PayrollReportManager() {
   const handleExport = async () => {
     toast.info('Iniciando exportação...');
     try {
-        window.open(`/api/bff/reports/payroll/export?month=${month}`, '_blank');
+        window.open(PayrollReportClientAdapter.exportUrl(month), '_blank');
     } catch (error) {
         toast.error('Erro ao baixar arquivo.');
     }
