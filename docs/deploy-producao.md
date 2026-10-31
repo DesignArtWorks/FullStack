@@ -1,53 +1,53 @@
-# Estratégia de Deploy e Produção - Gestão Inteligente de Escalas V3
+# Estratégia de Deploy e Produção
 
-Este documento descreve as diretrizes para a publicação do SaaS em ambiente produtivo, garantindo escalabilidade, segurança e alta disponibilidade.
+Checklist complementar de go-live. A decisão vigente da primeira produção é AWS em `sa-east-1`, descrita na [ADR-006](adr-006-infraestrutura-minima-producao-aws.md). Segredos seguem a [ADR-005](adr-005-secrets-producao-aws.md). Exposição de portas segue a [ADR-007](adr-007-exposicao-servicos-producao.md).
 
-## 1. Opções de Provedores Cloud
+`docker-compose.yml` é somente ambiente local. Este documento não autoriza produção em Compose, EC2 com Compose, EKS, Amplify, Vercel, App Runner ou Azure.
 
-> A decisão vigente para a primeira produção é AWS. A baseline normativa de VPC, ECS/Fargate, ALB/TLS, RDS, Redis, ECR, deploy e rollback está na [ADR-006](adr-006-infraestrutura-minima-producao-aws.md); este documento é um checklist complementar, não uma alternativa para operar produção em Docker Compose.
+## 1. Baseline de produção
 
-### Opção A: Amazon Web Services (AWS) - Recomendado
-- **Frontend (Next.js):** AWS Amplify ou Vercel (para melhor performance de SSR/Edge).
-- **Backend (Spring Boot):** AWS ECS (Elastic Container Service) com Fargate ou App Runner.
-- **CMS (Strapi):** AWS ECS com volume persistente (EFS) ou bucket S3 para mídias.
-- **Banco de Dados:** AWS RDS PostgreSQL com Multi-AZ para alta disponibilidade.
-- **Storage:** AWS S3 para uploads e backups.
+| Componente | Decisão vigente |
+| --- | --- |
+| Entrada | Route 53, CloudFront, AWS WAF e ACM. ALB público somente em HTTPS/443, com redirect de HTTP/80 |
+| Frontend | ECS Fargate, task privada. O browser fala com o Next.js/BFF |
+| Backend | ECS Fargate, task privada. Spring Boot é a fonte da verdade |
+| CMS | ECS Fargate, task privada. Admin do Strapi por VPN, SSO ou allowlist. Mídia em S3 |
+| Banco | RDS PostgreSQL Multi-AZ, sem IP público, criptografia em repouso |
+| Cache | ElastiCache Valkey/Redis, sem IP público |
+| Imagens | ECR por digest. Task definition não usa tag `latest` |
+| Infra como código | Terraform por ambiente. Development, homologação e produção não compartilham VPC nem conta |
+| Segredos | AWS Secrets Manager no runtime da task. SSM SecureString só para configuração sensível estável, conforme ADR-005 |
+| Observabilidade | CloudWatch, CloudTrail e OpenTelemetry. Logs sem segredo |
 
-### Opção B: Microsoft Azure
-- **Frontend:** Azure Static Web Apps.
-- **Backend:** Azure App Service for Containers ou Azure Kubernetes Service (AKS).
-- **CMS:** Azure App Service com Azure Files para persistência.
-- **Banco de Dados:** Azure Database for PostgreSQL.
-- **Storage:** Azure Blob Storage.
+Somente o ALB fica em subnet pública. Frontend, backend, Strapi, RDS e Redis não recebem IP público. `www` e `app` são os hosts públicos normais. `api` é consumida pelo BFF, com CORS restrito. `cms` não publica o admin na internet aberta. `assets` é CloudFront/S3, sem listagem de bucket.
 
-## 2. Configuração de DNS e Subdomínios
+## 2. DNS
 
-Para garantir o isolamento e organização dos serviços:
-- `www.escalas-saas.com.br`: Site Institucional e Landing Pages.
-- `app.escalas-saas.com.br`: Aplicação principal (Painel do Usuário).
-- `api.escalas-saas.com.br`: Core Backend API.
-- `cms.escalas-saas.com.br`: Painel Administrativo Strapi.
-- `assets.escalas-saas.com.br`: CDN / Mídias.
+- `www.escalas-saas.com.br`: site institucional e landing pages.
+- `app.escalas-saas.com.br`: aplicação autenticada.
+- `api.escalas-saas.com.br`: backend, preferencialmente atrás do BFF e do WAF.
+- `cms.escalas-saas.com.br`: caminho administrativo restrito, não admin público.
+- `assets.escalas-saas.com.br`: mídia via CloudFront/S3.
 
-## 3. Gestão de Segurança e Secrets
+TLS termina no CloudFront e no ALB, com certificado ACM, TLS 1.2 ou superior e HSTS no frontend.
 
-- **SSL/TLS:** Certificados obrigatórios em todas as rotas via AWS Certificate Manager ou Let's Encrypt.
-- **Secrets:** Não comitar arquivos `.env`. Usar **AWS Secrets Manager** ou **Azure Key Vault**.
-- **WAF:** Configurar Web Application Firewall para proteção contra ataques comuns (SQL Injection, XSS).
+## 3. Checklist de lançamento
 
-## 4. Checklist de Lançamento (Go-Live)
+1. [ ] **Terraform:** aplicar a baseline da ADR-006 em homologação antes de produção.
+2. [ ] **Backups:** RDS com backup automático e point-in-time recovery. Restore completo ensaiado, com RPO/RTO, conforme a issue #52.
+3. [ ] **Rede:** Internet alcança só 443 no ALB. 8080 e 1337 não são públicos. Frontend não acessa RDS. Backend acessa RDS e Redis.
+4. [ ] **Segredos:** nenhum valor em imagem, task definition, log ou repositório. Injeção pelo Secrets Manager.
+5. [ ] **Logs:** CloudWatch sem segredo, com correlation id. Alarmes de target unhealthy, 5xx, RDS e Redis antes do go-live.
+6. [ ] **CORS:** allowlist explícita. A API não aceita origem arbitrária.
+7. [ ] **Health:** ALB usa `/actuator/health` no backend, `/api/auth/session` no frontend e `/admin` no Strapi.
+8. [ ] **OpenAPI:** Swagger permanece desligado ou restrito fora do ambiente local.
+9. [ ] **SSO:** `GOOGLE_CLIENT_ID` de produção com redirect HTTPS canônico. O segredo fica no BFF/backend, não no browser.
+10. [ ] **Cookies:** sessão do NextAuth com `Secure` e `HttpOnly`. O JWT do Spring não vai ao browser.
+11. [ ] **Billing:** webhook Stripe com assinatura e idempotência antes de cobrança real.
+12. [ ] **LGPD:** consentimento, retenção e direitos do titular classificados no épico #36 antes de dado real de cliente.
 
-1. [ ] **Backups:** Configurar rotina diária de snapshot do RDS.
-2. [ ] **Logs:** Centralizar logs no CloudWatch ou ELK Stack.
-3. [ ] **CORS:** Restringir `api.*` para aceitar apenas requisições de `app.*` e `www.*`.
-4. [ ] **Health Checks:** Configurar monitoramento de disponibilidade `/actuator/health` no Spring Boot.
-5. [ ] **Geofencing:** Validar se as chaves de API de Mapas (Google/OSM) estão configuradas para produção.
-6. [ ] **SSO:** Configurar o `GOOGLE_CLIENT_ID` de produção no Google Cloud Console com as URLs de redirecionamento corretas.
-7. [ ] **Cookies:** Garantir que `SECURE=true` e `HTTP_ONLY=true` estejam ativos para cookies de sessão e UTM.
+## 4. Rollback
 
-## 5. Estratégia de Rollback
+O rollback de aplicação troca a task definition para o digest estável anterior e espera o healthcheck. Ele não recria RDS, Redis, volumes nem dados.
 
-Em caso de falha crítica:
-1. Reverter a imagem do container no ECS para a tag estável anterior.
-2. No banco de dados, aplicar scripts de "down" de migração caso existam alterações de schema incompatíveis.
-3. No Frontend, utilizar o rollback instantâneo da Vercel ou Amplify.
+Migrations de produção são aditivas e compatíveis por pelo menos uma versão. Migração irreversível exige backup/PITR validado e runbook específico. Não executar `down` automático em produção.

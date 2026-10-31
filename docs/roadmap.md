@@ -5,18 +5,29 @@ KPIs e organização do Slack: [Gestão, AWS e marketing](plano-gestao-entrega-a
 (referência 06/10/2026, issue #114). Consultar o snapshot antes de assumir que
 checklists históricos representam o estado atual das issues ou da produção.
 
-Data de referencia: 2026-09-07.
+Data de referencia do plano: 2026-09-07. Estado do gate abaixo: 2026-10-31.
 
-## Governanca de release (estado 2026-09-13)
+## Governanca de release (estado 2026-10-31)
 
 O estado operacional deve ser lido separando `Done`, `implementado em develop`,
-`promovido para main` e `liberado`. O gate atual de producao permanece bloqueado
-pela #99 e pelo PR #102 até todos os checks obrigatorios passarem.
+`promovido para main` e `liberado`.
+
+O PR #102 foi mergeado em 2026-10-04
+(`f044ece12eb08c8a5f9d1f6d562791b4505ad246`). Ele nao bloqueia mais a promocao.
+O gate de producao permanece aberto na #99 ate os checks obrigatorios e os
+filhos ainda abertos passarem. `main` nao foi promovida.
 
 ### R0 — Security & Release Gate
 
-- #99-A/#103 e #99-B/#104 (P0), seguidos por #99-C/#105 a #99-G/#109 (P1).
-- Verificar #52 (backup/restore), #53 (Stripe/webhook) e #54 (limites concorrentes).
+- Fechados em develop: #103, #104, #105, #107 e #108.
+- Ainda abertos no preflight da #99: #106 (scanner historico, push protection e
+  rotacao) e #109 (prova de Security Group para as portas 8080 e 1337).
+- #118: Spring Framework 7.0.9 ja esta fixado em develop (`69dd1b2`). A issue
+  segue aberta ate a evidencia de SCA.
+- #128: `main` e `develop` nao tem ancestral comum. Achados historicos de
+  segredo em `main` ainda impedem tratar a promocao como concluida.
+- Verificar #52 (backup/restore), #53 (Stripe/webhook) e #54 (limites
+  concorrentes). #96 segue como gate de resiliencia e resposta a incidente.
 - Exigir testes negativos, CI completo, Docker/health/OpenAPI, SCA sem High/Critical
   nao aceitos, secret scan historico e novo Codex Security sem High/Critical.
 - Somente depois promover `develop` para `main`.
@@ -29,14 +40,19 @@ de endpoints publicos/uploads/Strapi Admin.
 ### R2 — Production Readiness
 
 Observabilidade, correlation ID, logs estruturados com masking, readiness/alertas,
-LGPD/retention/audit e runbooks operacionais.
+LGPD/retention/audit e runbooks operacionais. O epico #36 precisa de filhas
+executaveis para consentimento, retencao, direitos do titular e evidencia de
+auditoria append-only antes de dado real de cliente.
 
 ### R3 — Architecture Quality
 
 Convergencia incremental para monolito modular/hexagonal, testes arquiteturais,
 Flyway como source of truth, contratos OpenAPI e reducao gradual de dependencias
 legadas. Kafka, brokers, microservices, RLS e multi-region permanecem condicionados
-a triggers concretos e nao sao compromisso desta release.
+a triggers concretos e nao sao compromisso desta release. As issues #37 e #85
+ficam depois do gate #99: a primeira migra regra de `service` para o dominio
+por contexto, sem declarar a migracao concluida; a segunda separa server state
+do Zustand somente no piloto de Company.
 
 ## Estrategia de entrega
 
