@@ -101,18 +101,8 @@ jobs:
         shell: bash
         working-directory: Backend/java-app1/demo
         run: |
-          shopt -s nullglob
-          reports=(target/surefire-reports/com.escala.authservice.integration.*IntegrationTest.txt)
-          if (( ${#reports[@]} == 0 )); then
-            echo "No integration test report was produced."
-            exit 1
-          fi
-          for report in "${reports[@]}"; do
-            if ! grep -Eq 'Tests run: [1-9][0-9]*, Failures: 0, Errors: 0, Skipped: 0' "$report"; then
-              echo "Integration report is skipped, empty or unsuccessful: $report"
-              exit 1
-            fi
-          done
+          python3 ../../../scripts/ci/test-integration-reports.py
+          python3 ../../../scripts/ci/check-integration-reports.py target/surefire-reports
 
   frontend:
     name: Frontend / Quality and Build
@@ -151,12 +141,24 @@ jobs:
     name: CMS / Build
     runs-on: ubuntu-24.04
     timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: strapi_ci
+          POSTGRES_PASSWORD: ci-only-not-for-production
+          POSTGRES_DB: strapi_identity_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U strapi_ci -d strapi_identity_test"
+          --health-interval 5s --health-timeout 5s --health-retries 20
     env:
       NODE_ENV: production
       DATABASE_CLIENT: postgres
       DATABASE_HOST: localhost
       DATABASE_PORT: "5432"
-      DATABASE_NAME: strapi_ci
+      DATABASE_NAME: strapi_identity_test
       DATABASE_USERNAME: strapi_ci
       DATABASE_PASSWORD: ci-only-not-for-production
       DATABASE_SSL: "false"
@@ -166,6 +168,8 @@ jobs:
       TRANSFER_TOKEN_SALT: ci-transfer-token-salt
       ENCRYPTION_KEY: ci-encryption-key
       STRAPI_CRON_ENABLED: "false"
+      CMS_IDENTITY_TEST_DISPOSABLE: "true"
+      JWT_SECRET: ci-only-cms-identity-test-not-for-production
     steps:
       - name: Checkout repository
         run: |
@@ -174,7 +178,7 @@ jobs:
           git fetch --depth=1 origin "$GITHUB_SHA"
           git checkout --detach FETCH_HEAD
 
-      - name: Install and build Strapi CMS
+      - name: Install, build and test Strapi identity boundary
         working-directory: Backend/cms-strapi
         run: >-
           docker run --rm
@@ -182,8 +186,9 @@ jobs:
           -e DATABASE_NAME -e DATABASE_USERNAME -e DATABASE_PASSWORD -e DATABASE_SSL
           -e APP_KEYS -e API_TOKEN_SALT -e ADMIN_JWT_SECRET
           -e TRANSFER_TOKEN_SALT -e ENCRYPTION_KEY -e STRAPI_CRON_ENABLED
+          -e CMS_IDENTITY_TEST_DISPOSABLE -e JWT_SECRET --network host
           -v "$PWD:/workspace" -w /workspace node:22-bookworm-slim
-          sh -c "npm ci && npm run test:security && npm run build"
+          sh -c "npm ci && npm run test:security && npm run build && npm run test:security:integration"
 
   dependency-scan:
     name: Security / Dependency SCA

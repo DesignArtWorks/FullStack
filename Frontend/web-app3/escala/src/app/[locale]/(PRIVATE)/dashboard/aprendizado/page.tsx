@@ -2,6 +2,7 @@ import { LearningProgressPanel } from '@/components/dashboard/learning/LearningP
 import { getLearningProgress } from '@/services/learning-progress.service';
 import { getRequiredServerAuth } from '@/lib/auth/server-auth';
 import { DashboardPageHeader } from '@/components/dashboard/DashboardPageHeader';
+import { canManageSchedules } from '@/lib/permissions';
 
 export const metadata = {
   title: 'Aprendizado | Plataforma Escala',
@@ -11,10 +12,7 @@ export default async function AprendizadoPage() {
   const { accessToken, session } = await getRequiredServerAuth();
   const items = await getLearningProgress(accessToken);
   const roles = session.user.roles ?? [];
-  const isManagerOrAdmin =
-    roles.includes('ADMIN') ||
-    roles.includes('OWNER') ||
-    roles.some((role) => role.startsWith('MANAGER'));
+  const isManagerOrAdmin = canManageSchedules(roles);
 
   return (
     <div className="container mx-auto space-y-8 py-10">

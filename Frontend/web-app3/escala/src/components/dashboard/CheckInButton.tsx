@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Map } from '@/components/shared/Map';
 import { GeoPoint } from '@/core/domain/models/map.model';
+import { CheckInAdapter } from '@/infrastructure/adapters/check-in.adapter';
 
 interface CheckInButtonProps {
   companyLocation?: {
@@ -46,22 +47,17 @@ export function CheckInButton({ companyLocation }: CheckInButtonProps) {
         setUserPos(currentPos);
 
         try {
-          const response = await fetch('/api/bff/check-in', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              latitude: currentPos.lat,
-              longitude: currentPos.lng,
-              deviceFingerprint: navigator.userAgent,
-            }),
+          const result = await CheckInAdapter.register({
+            latitude: currentPos.lat,
+            longitude: currentPos.lng,
+            deviceFingerprint: navigator.userAgent,
           });
 
-          if (response.ok) {
+          if (result.ok) {
             toast.success('Ponto batido com sucesso!');
             setStatus('success');
           } else {
-            const error = await response.json();
-            toast.error(error.message || 'Você está fora do raio permitido.');
+            toast.error(result.message || 'Você está fora do raio permitido.');
             setStatus('error');
           }
         } catch {

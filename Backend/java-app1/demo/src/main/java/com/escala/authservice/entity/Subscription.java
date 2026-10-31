@@ -38,6 +38,9 @@ public class Subscription {
     private OffsetDateTime currentPeriodEnd;
     
     private OffsetDateTime canceledAt;
+
+    /** Campo created do ultimo evento do Stripe aplicado; eventos mais antigos sao ignorados. */
+    private Long lastEventCreated;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
 

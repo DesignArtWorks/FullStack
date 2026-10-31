@@ -3,6 +3,7 @@ import { AiAssistantTrigger } from '@/features/ai/components/AiAssistantTrigger'
 import { getRequiredServerAuth } from '@/lib/auth/server-auth';
 import { BrainCircuit, Radar, ShieldCheck } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { canManageSchedules } from '@/lib/permissions';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -19,7 +20,7 @@ export default async function DashboardLayout({
 }: LayoutProps) {
   const { session } = await getRequiredServerAuth();
   const roles = session.user.roles ?? [];
-  const isManagerOrAdmin = roles.includes('ADMIN') || roles.includes('OWNER') || roles.some((role) => role.startsWith('MANAGER'));
+  const isManagerOrAdmin = canManageSchedules(roles);
   const primaryRole = roles[0] ?? 'MEMBRO';
 
   return (

@@ -17,6 +17,7 @@ import {
   getSchedulingLegends,
   getSchedulingMonthCalendar,
 } from '@/services/intelligent-scheduling.service';
+import { canManageSchedules } from '@/lib/permissions';
 
 type IntelligentSchedulePageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -34,8 +35,7 @@ function parsePositiveNumber(value: string | undefined, fallback: number) {
 export default async function IntelligentSchedulePage({ searchParams }: IntelligentSchedulePageProps) {
   const { session, accessToken } = await getRequiredServerAuth();
   const roles = session.user.roles ?? [];
-  const canManageIntelligentSchedule =
-    roles.includes('ADMIN') || roles.includes('OWNER') || roles.some((role) => role.startsWith('MANAGER'));
+  const canManageIntelligentSchedule = canManageSchedules(roles);
 
   if (!canManageIntelligentSchedule) {
     redirect('/dashboard/escala');

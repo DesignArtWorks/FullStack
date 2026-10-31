@@ -38,8 +38,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { TeamInvitation } from '@/core/domain/models/invitation.model';
-
-const TEAM_INVITATIONS_URL = '/api/bff/team/invitations';
+import { TeamInvitationClientAdapter } from '@/infrastructure/adapters/team-invitation-client.adapter';
 
 const InviteSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -67,9 +66,8 @@ export function TeamInviteManager() {
   const fetchInvitations = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch(TEAM_INVITATIONS_URL);
-      if (response.ok) {
-        const data = await response.json();
+      const data = await TeamInvitationClientAdapter.list();
+      if (data) {
         setInvitations(data);
       }
     } catch {
@@ -86,21 +84,15 @@ export function TeamInviteManager() {
   const onInvite = async (data: InviteSchemaType) => {
     setSending(true);
     try {
-      const response = await fetch(TEAM_INVITATIONS_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
+      const result = await TeamInvitationClientAdapter.create(data);
 
-      if (response.ok) {
-        const created = (await response.json()) as TeamInvitation;
-        setLatestInvite(created);
+      if (result.ok) {
+        setLatestInvite(result.invitation);
         toast.success('Convite enviado com sucesso!');
         form.reset();
         void fetchInvitations();
       } else {
-        const error = await response.json();
-        toast.error(error.message || 'Erro ao enviar convite.');
+        toast.error(result.message || 'Erro ao enviar convite.');
       }
     } catch {
       toast.error('Erro ao processar convite.');
@@ -111,11 +103,9 @@ export function TeamInviteManager() {
 
   const onCancel = async (id: string) => {
     try {
-      const response = await fetch(`${TEAM_INVITATIONS_URL}/${id}`, {
-        method: 'DELETE',
-      });
+      const cancelled = await TeamInvitationClientAdapter.cancel(id);
 
-      if (response.ok) {
+      if (cancelled) {
         toast.success('Convite cancelado.');
         fetchInvitations();
       }

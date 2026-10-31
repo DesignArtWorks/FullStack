@@ -42,6 +42,7 @@ public class ScheduleCycleAssignmentService {
             UUID cyclePublicId,
             CycleAssignmentsRequest request
     ) {
+        scheduleCycleService.requireCanManage(email);
         ScheduleCycle cycle = scheduleCycleService.getCycle(email, cyclePublicId);
         ensureEditable(cycle);
         List<CycleAssignmentItemRequest> items = request == null || request.assignments() == null

@@ -7,11 +7,12 @@ import Link from 'next/link';
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
 import { getRequiredServerAuth } from '@/lib/auth/server-auth';
 import { Badge } from '@/components/ui/badge';
+import { isAdminOrOwner } from '@/lib/permissions';
 
 export default async function TeamSlot() {
   const { session, accessToken } = await getRequiredServerAuth();
 
-  const isAdmin = session.user.roles.includes('ADMIN') || session.user.roles.includes('OWNER');
+  const isAdmin = isAdminOrOwner(session.user.roles);
   
   const [shifts, workSchedules] = await Promise.all([
     getShifts(accessToken),
