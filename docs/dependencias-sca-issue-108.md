@@ -1,5 +1,30 @@
 # Dependencias e gate SCA — issues #99 / #108
 
+## Estado atual — revalidação em 16/11/2026
+
+Este registro prevalece sobre os snapshots históricos abaixo. Trivy 0.74.0,
+com o digest do CI e DB atualizada em `2026-11-16T13:03:44Z`, passou sem
+supressões nos três componentes: SBOM Java (173 dependências), lock npm do
+CMS (1355 pacotes) e lock pnpm do frontend (740 pacotes), incluindo dev/test.
+Zero High/Critical reportados. Isso não equivale ao gate integral da #99.
+
+As exceções braces e zod foram removidas de `.trivyignore.yaml`; nenhuma
+validade foi prorrogada. O [advisory braces](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm)
+foi retirado em 23/10. Para Zod há divergência de fontes: o
+[GitHub Advisory](https://github.com/advisories/GHSA-mrhx-c7xc-m3w5) consultado
+ainda lista o finding, enquanto a [NVD](https://nvd.nist.gov/vuln/detail/CVE-2023-54404)
+registra o CVE como rejeitado; o Trivy atualizado não o reporta, mesmo sem
+ignorefile. Não declarar ausência universal de vulnerabilidade.
+
+Registry npm: braces permanece 3.0.3; Zod principal já está em 4.6.7;
+koa-session permanece 7.0.2 e exige Zod ^3.24.1, cuja última versão é 3.25.76.
+Sem patch compatível adicional disponível, manifests/locks foram preservados.
+Não forçar Zod 4 nesse consumidor. Evidências e comandos em
+[99-sca-revalidation](../specs/99-sca-revalidation/research.md).
+
+As seções de aceites temporários abaixo descrevem o histórico; não há mais
+supressão ativa desses dois CVEs nesta branch.
+
 O job `Security / Dependency SCA` verifica dependencias diretas e transitivas com
 Trivy. A analise inclui dependencias de desenvolvimento e bloqueia ocorrencias
 High/Critical, conforme a politica AppSec. O nome do job e local ao projeto;
