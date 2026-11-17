@@ -44,6 +44,9 @@ jobs:
         shell: pwsh
         run: ./scripts/security/check-versioned-secrets.ps1
 
+      - name: Test local credential diagnostic with synthetic loopback services
+        run: python3 -m unittest discover -s scripts/security -p 'test_local_credentials.py' -v
+
       - name: Test controls and scan complete develop and delivery history
         run: |
           image=zricethezav/gitleaks:v8.24.2@sha256:b5918eb91b8d2473cec722f066abb4352e4ffdc4ec9f4283ec143aba9ec9ebc4
