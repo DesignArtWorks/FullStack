@@ -112,3 +112,11 @@ Perspectiva do mantenedor: preservar clones, trabalho de UI e rastreabilidade; p
 | AB-004 | Qual configuração real de push protection está disponível e quem a administra? | Wemerson | Apenas ativação externa de FR-010 | Consulta de disponibilidade/configuração sem ampliar permissões por inferência |
 
 Gate: **preparação PASS; implementação PENDING**. US1 do scanner pode ser revisada de forma independente; US2/autenticação e limpeza histórica têm abertas próprias. H1/H2 continuam pendentes. Próximo passo: sair do papel de entrevistador e apresentar proposta/spec/plan/tasks; fechar dossiê não significa autorizar a implementação.
+
+## Retomada autorizada — 2026-11-17
+
+- Usuário: “vamos concluir então a #106”. Escopo: concluir pendências da issue, sem declarar #99 ou deploy concluídos.
+- AB-001: resposta explícita “Manter o bloqueio do segredo; diagnóstico inconclusivo não libera a entrega”.
+- AB-003 / H1 US2: contrato apresentado, resposta “Aprovo o contrato proposto.”; [contrato](contracts/local-validation.md).
+- AB-004: usuário autorizou “ativar Secret Protection e push protection”; UI autenticada mostrou Secret Protection ativo e Push protection On em 17/11. Sem licença adicional conforme diálogo GitHub. A primeira tentativa foi rejeitada pela revisão automática; autorização específica obtida antes de prosseguir.
+- Mapping real (arquivos/keys/usuários/alvos) ainda solicitado, sem solicitar valores secretos; não adivinhar destinatários.

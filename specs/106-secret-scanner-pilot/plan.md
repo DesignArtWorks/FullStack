@@ -154,3 +154,16 @@ Escopo: execução efetiva da manutenção #106/US1 e esta correção documental
 | CON-09 | Manutenção excepcional autorizada suspendeu temporariamente exigência de PR e fez force push nas refs protegidas; gate constitucional pré-PR não registrado contemporaneamente; restrição do ator não persistiu. Proteções restauradas e merges posteriores #124/#125 com checks não apagam os fatos. | FAIL da manutenção frente à constituição vigente; entregas dependentes de conformidade integral BLOCKED, Wemerson. Sem emenda aprovada, main/fechamento #106/#99 não liberados |
 
 Este check antecede o PR corretivo que adiciona esta seção; o SHA desse documento e os checks do novo PR ficam no corpo do PR para evitar autorreferência. Não fabricar uma execução histórica do check. A correção documental pode avançar para revisão com as lacunas explícitas; qualquer entrega que dependa de conformidade integral permanece bloqueada.
+
+## Retomada US2 — 17/11/2026
+
+Contrato aprovado em contracts/local-validation.md; AB-001 fail-closed confirmada.
+Implementação Python standard library, adaptadores HTTP/Redis/cliente psql,
+fontes privadas ou SHA imutável. Sem dependência runtime nova. Arquivos previstos:
+validate-local-credentials.py, test_local_credentials.py, job existente do scanner,
+docs/secret-scanning-issue-106.md e spec/plan/interview/tasks/contrato.
+Testes sintéticos cobrem destinos proibidos, fontes privadas, commit explícito,
+redaction, sessão/logout, resposta ambígua, redirects e PostgreSQL read-only.
+Execução real somente após mapping explícito. Rollback via revert do commit do
+novo tooling; preservar scanner histórico e push protection. Não reescrever Git.
+Manutenção histórica continua incidente registrado, sem converter FAIL em PASS.

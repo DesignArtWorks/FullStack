@@ -154,3 +154,31 @@ Este ledger é canônico para o estado atual das tarefas; tabelas anteriores sã
 | T014 | BLOCKED | Merge US1 real 8b7a80a e registro 0e9e58d; handoff final depende de T013/aceites; sem main/fechamento #106/#99 |
 
 H2 US1: revisão e merge realizados por Wemerson em #124; não autoriza US2. H3 manutenção: aprovação excepcional já registrada, encerrada com proteção restaurada. A tabela pós-execução em plan.md discrimina CON-01–CON-09, fonte e pendência; não substitui um check pré-PR que não foi documentado no momento correto.
+
+## Retomada de conclusão — 17/11/2026 (estado mais recente)
+
+Pedido humano: concluir #106. Base develop f3426c2765777cf12450cc0c6909c3d3fa170647;
+branch security/issue-106-completion, worktree isolado /tmp/escala-106-completion.
+Instruções AGENTS anteriores foram revogadas pelo usuário nesta sessão; aceites
+funcionais da issue e fatos históricos continuam preservados, sem inventar PASS.
+
+| Tarefa | Estado | Evidência atual |
+| --- | --- | --- |
+| T001–T008 | DONE | Entregas históricas preservadas; controles US1 reexecutados com imagem fixada, PASS |
+| T009 | DONE | AB-001 decidida: inconclusivo não libera segredo; contrato AB-003 apresentado e aprovado explicitamente; contracts/local-validation.md |
+| T010 | IN_PROGRESS | Implementação e 14 testes sintéticos PASS; mapping/execução real local ainda pendentes, solicitados ao mantenedor |
+| T011 | BLOCKED no aceite completo | Limpeza já entregue; rotação não executada, mantém marco após #103/#106/#109 e antes #99. Não transformar em requisito circular nem afirmar revogação |
+| T012 | IN_PROGRESS | Secret Protection ativo e Push protection On observados na UI autenticada após autorização específica; controles históricos PASS; CI do novo head pendente. Incidente CON-09 antigo permanece FAIL histórico |
+| T013 | IN_PROGRESS | Preparação do PR de diagnóstico, sem bypass; integração ainda pendente |
+| T014 | BLOCKED | Aguardar evidências finais e revisão; #99/#128/main não encerrados por esta fatia |
+
+Verificações locais: `python3 -m unittest discover -s scripts/security -p
+'test_local_credentials.py' -v`: 14 testes PASS, 3,52 s; a primeira tentativa
+falhou por restrição do sandbox a sockets, repetida autorizadamente em loopback.
+`py_compile` e `git diff --check` PASS. Gitleaks dir dos scripts novos PASS.
+Harnesses test-secret-scanner.sh/test-secret-history.sh PASS em Docker sem rede,
+com digest vigente; erros impressos nos cenários negativos são esperados.
+PowerShell não disponível localmente; gate correspondente permanece no CI.
+Somente PostgreSQL 127.0.0.1:5433 e Redis :6379 encontrados ativos; nenhuma
+credencial real foi lida ou autenticada. Sem alterações no runtime da aplicação,
+contratos REST ou domínio; builds/runtime backend serão verificados pelo CI vigente.

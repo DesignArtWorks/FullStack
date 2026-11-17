@@ -60,3 +60,15 @@ As proteções originais foram restauradas e comparadas: PR obrigatório, Requir
 15 ocorrências históricas foram removidas; uma fixture JWT comprovadamente sintética foi aceita por fingerprint exato, somada às duas exceções sintéticas anteriores remapeadas. Nenhuma exclusão ampla de testes foi criada. O CMS deixou de ter fallback de senha PostgreSQL/MySQL e os sete testes de segurança/build passaram no CI real.
 
 T011 está BLOCKED no aceite completo: limpeza das duas refs autorizadas concluída; rotação no marco ainda pendente. T013/T014 também estão BLOCKED no aceite global; registram os fatos de entrega/integração US1 por #124, sem declarar conformidade integral da governança ou conclusão de #106. CON-09 da manutenção é FAIL: suspensão temporária da exigência de PR/force push e registro pré-PR ausente não cumprem a constituição vigente, apesar da autorização humana específica. Proteções restauradas não alteram esse resultado histórico. US2, rotação e fechamento de #106/#99 permanecem pendentes. Histórico em main/outras branches/forks/caches e clones antigos permanece fora do escopo. Reaplicar trabalho antigo somente em clone/base saneada com novo scan; não mesclar o histórico antigo. Credenciais não foram rotacionadas neste desenvolvimento local.
+
+## US2 — diagnóstico local (17/11/2026)
+
+[Contrato aprovado](../specs/106-secret-scanner-pilot/contracts/local-validation.md).
+Tooling em `scripts/security/validate-local-credentials.py`, Python 3 sem dependência
+pip/runtime da aplicação. Dry-run padrão, execução explícita, fontes privadas
+ignoradas ou commit SHA exato, destinos loopback literais, sem proxies/redirects.
+Relatório somente IDs opacos/estados/motivos; indisponibilidade não libera finding.
+Testes sintéticos: `python3 -m unittest discover -s scripts/security -p 'test_local_credentials.py' -v`.
+O CI executa só esses testes sintéticos; nunca autentica credenciais reais.
+Push protection: estado On verificado na UI autenticada do GitHub em 17/11/2026,
+com Secret Protection ativo, após autorização explícita do mantenedor.
